@@ -27,15 +27,26 @@ const categories = [
 		<Header />
 		<main>
 			<section class="page-head">
-				<span class="eyebrow">麦芽营销团队出品</span>
-				<h1>规模化运营社媒账号的实战方法</h1>
-				<p>写给需要在 TikTok、Instagram、Reddit 和 X 上管理成百上千个账号的代运营机构、MCN 和出海品牌团队。</p>
+				<div class="page-head-copy">
+					<span class="section-kicker">麦芽营销团队出品</span>
+					<h1>规模化运营社媒账号的实战方法</h1>
+					<p>写给需要在 TikTok、Instagram、Reddit 和 X 上管理成百上千个账号的代运营机构、MCN 和出海品牌团队。</p>
+					<div class="hero-stats" aria-label="博客内容概览">
+						<span><strong>{posts.length}</strong>篇文章</span>
+						<span><strong>4</strong>个主题</span>
+						<span><strong>Ainnc</strong>实战方法</span>
+					</div>
+				</div>
+				<div class="tile-grid" aria-hidden="true">
+					{Array.from({ length: 42 }).map((_, index) => <span class:list={['tile', { bright: index % 8 === 0 || index % 13 === 0 }]} />)}
+				</div>
 			</section>
 
 			<section class="filter-bar" aria-label="文章分类筛选">
 				{
 					categories.map((category, index) => (
 						<button class:list={['filter-pill', { selected: index === 0 }]} type="button" data-filter={category}>
+							<span class="dot" aria-hidden="true"></span>
 							{category}
 						</button>
 					))
@@ -43,7 +54,7 @@ const categories = [
 			</section>
 
 			<section class="post-grid" id="post-grid">
-				{posts.map((post) => <PostCard post={post} />)}
+				{posts.map((post, index) => <PostCard post={post} featured={index === 0} />)}
 			</section>
 		</main>
 		<Footer />
@@ -70,9 +81,12 @@ const categories = [
 <style>
 	.page-head {
 		display: grid;
-		gap: 0.8rem;
-		margin-bottom: 1.5rem;
-		padding: 2rem;
+		grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+		gap: 2rem;
+		align-items: center;
+		margin-bottom: 1.35rem;
+		overflow: hidden;
+		padding: clamp(2rem, 5vw, 4rem);
 		border: 1px solid var(--line);
 		border-radius: 8px;
 		background:
@@ -81,9 +95,68 @@ const categories = [
 		box-shadow: var(--shadow);
 	}
 
+	.page-head-copy {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.section-kicker {
+		display: inline-flex;
+		gap: 0.65rem;
+		align-items: center;
+		width: fit-content;
+		color: var(--accent-dark);
+		font-weight: 900;
+	}
+
+	.section-kicker::before {
+		content: '';
+		width: 1.75rem;
+		height: 2px;
+		background: var(--accent);
+	}
+
 	.page-head p {
 		max-width: 720px;
 		font-size: 1.05rem;
+	}
+
+	.hero-stats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem;
+		margin-top: 0.25rem;
+		color: var(--muted);
+		font-weight: 800;
+	}
+
+	.hero-stats span {
+		border: 1px solid rgba(0, 201, 170, 28%);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 70%);
+		padding: 0.45rem 0.75rem;
+	}
+
+	.hero-stats strong {
+		margin-right: 0.2rem;
+		color: var(--text);
+	}
+
+	.tile-grid {
+		display: grid;
+		grid-template-columns: repeat(7, minmax(0, 1fr));
+		gap: 0.55rem;
+	}
+
+	.tile {
+		aspect-ratio: 1;
+		border-radius: 7px;
+		background: rgba(0, 177, 179, 10%);
+	}
+
+	.tile.bright {
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		box-shadow: 0 10px 28px rgba(0, 201, 170, 24%);
 	}
 
 	.filter-bar {
@@ -95,6 +168,9 @@ const categories = [
 	}
 
 	.filter-pill {
+		display: inline-flex;
+		gap: 0.45rem;
+		align-items: center;
 		border: 1px solid var(--line);
 		border-radius: 999px;
 		background: white;
@@ -105,10 +181,32 @@ const categories = [
 		cursor: pointer;
 	}
 
+	.filter-pill .dot {
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 999px;
+		background: currentColor;
+		opacity: 0.45;
+	}
+
 	.filter-pill:hover,
 	.filter-pill.selected {
 		border-color: var(--accent-dark);
 		background: #063f3c;
 		color: white;
+	}
+
+	.filter-pill.selected .dot {
+		opacity: 1;
+	}
+
+	@media (max-width: 900px) {
+		.page-head {
+			grid-template-columns: 1fr;
+		}
+
+		.tile-grid {
+			display: none;
+		}
 	}
 </style>

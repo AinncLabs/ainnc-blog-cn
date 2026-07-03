@@ -56,10 +56,14 @@ const aboutPath = isEnglish ? '/en/about/' : '/about/';
 	.brand {
 		display: inline-flex;
 		align-items: center;
+		flex-shrink: 0;
 		gap: 0.65rem;
 		color: var(--text);
 		font-weight: 800;
 		text-decoration: none;
+	}
+	.brand > span:last-child {
+		white-space: nowrap;
 	}
 	.brand-mark {
 		display: grid;

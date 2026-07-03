@@ -14,6 +14,7 @@ const { post, featured = false, locale = 'zh' } = Astro.props;
 const meta = getPostMeta(post, locale);
 const postHref = locale === 'en' ? `/en/blog/${post.id}/` : `/blog/${post.id}/`;
 const tagLabel = locale === 'en' ? 'Post tags' : '文章标签';
+const readLabel = locale === 'en' ? 'Read article' : '阅读全文';
 ---
 
 <article class:list={['post-card', { featured }]} data-category={meta.category}>
@@ -31,6 +32,10 @@ const tagLabel = locale === 'en' ? 'Post tags' : '文章标签';
 		}
 	</a>
 	<div class="post-body">
+		<div class="card-code">
+			<span class="code-dot" aria-hidden="true"></span>
+			<span>{featured ? 'FEATURED' : 'ARTICLE'}</span>
+		</div>
 		<div class="post-meta">
 			<span>{meta.category}</span>
 			<span><FormattedDate date={post.data.pubDate} locale={locale} /></span>
@@ -42,9 +47,10 @@ const tagLabel = locale === 'en' ? 'Post tags' : '文章标签';
 				<ul class="tag-list" aria-label={tagLabel}>
 					{meta.tags.map((tag) => (
 						<li>{tag}</li>
-					))}
-				</ul>
-			)
-		}
+				))}
+			</ul>
+		)
+	}
+		<a class="read-link" href={postHref}>{readLabel}<span aria-hidden="true">-&gt;</span></a>
 	</div>
 </article>
