@@ -4,7 +4,7 @@ export type Locale = 'zh' | 'en';
 
 export const SITE_COPY = {
 	zh: {
-		title: 'Ainnc 麦芽营销博客',
+		title: 'Ainnc 麦芽营销',
 		description: '分享 Ainnc 麦芽营销的产品更新、社媒账号运营、素材管理和批量任务发布实践。',
 		home: '首页',
 		blog: '博客',
@@ -13,7 +13,7 @@ export const SITE_COPY = {
 		telegram: '加入 Telegram',
 	},
 	en: {
-		title: 'Ainnc Blog',
+		title: 'Ainnc',
 		description:
 			'Product updates, social account operations, asset management, and bulk publishing workflows from Ainnc.',
 		home: 'Home',
