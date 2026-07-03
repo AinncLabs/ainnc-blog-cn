@@ -1,23 +1,31 @@
 ---
-import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import LanguageSwitch from './LanguageSwitch.astro';
+import { isEnglishPath, SITE_COPY } from '../i18n';
+
+const isEnglish = isEnglishPath(Astro.url.pathname);
+const copy = isEnglish ? SITE_COPY.en : SITE_COPY.zh;
+const rootPath = isEnglish ? '/en/' : '/';
+const blogPath = isEnglish ? '/en/blog/' : '/blog/';
+const aboutPath = isEnglish ? '/en/about/' : '/about/';
 ---
 
 <header>
 	<nav>
-		<a class="brand" href="/">
+		<a class="brand" href={rootPath}>
 			<span class="brand-mark">
 				<img src="/ainnc-logo-icon.png" width="36" height="36" alt="Ainnc" />
 			</span>
-			<span>{SITE_TITLE}</span>
+			<span>{copy.title}</span>
 		</a>
 		<div class="internal-links">
-			<HeaderLink href="/">首页</HeaderLink>
-			<HeaderLink href="/blog">博客</HeaderLink>
-			<HeaderLink href="/about">关于</HeaderLink>
+			<HeaderLink href={rootPath}>{copy.home}</HeaderLink>
+			<HeaderLink href={blogPath}>{copy.blog}</HeaderLink>
+			<HeaderLink href={aboutPath}>{copy.about}</HeaderLink>
 			<a class="site-link" href="https://www.ainnc.com/#hero" target="_blank" rel="noopener noreferrer">
-				进入官网
+				{copy.officialSite}
 			</a>
+			<LanguageSwitch />
 		</div>
 	</nav>
 </header>

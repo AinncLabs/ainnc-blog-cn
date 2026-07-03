@@ -1,11 +1,14 @@
 ---
+import { isEnglishPath } from '../i18n';
+
 const today = new Date();
+const isEnglish = isEnglishPath(Astro.url.pathname);
 ---
 
 <footer>
 	<div>
 		<strong>Ainnc 麦芽营销</strong>
-		<span>账号、文件、任务和用量管理</span>
+		<span>{isEnglish ? 'Accounts, files, tasks, and usage management' : '账号、文件、任务和用量管理'}</span>
 	</div>
 	<p>&copy; {today.getFullYear()} Ainnc. All rights reserved.</p>
 </footer>

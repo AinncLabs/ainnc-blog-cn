@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import Header from '../../../components/Header.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getPostMeta, SITE_COPY } from '../../../i18n';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const categories = Array.from(new Set(posts.map((post) => getPostMeta(post, 'en').category)));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Blog | ${SITE_COPY.en.title}`} description={SITE_COPY.en.description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="page-head">
+				<span class="eyebrow">Library</span>
+				<h1>Blog</h1>
+				<p>Product updates, tutorials, and operating practices for Ainnc.</p>
+			</section>
+
+			<section class="category-bar panel">
+				<strong>Categories</strong>
+				<ul class="tag-list">
+					{categories.map((category) => <li>{category}</li>)}
+				</ul>
+			</section>
+
+			<section class="post-grid">
+				{posts.map((post) => <PostCard post={post} locale="en" />)}
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.page-head {
+		display: grid;
+		gap: 0.8rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.page-head p {
+		max-width: 720px;
+	}
+
+	.category-bar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		align-items: center;
+		margin-bottom: 1rem;
+		padding: 1rem;
+	}
+</style>
