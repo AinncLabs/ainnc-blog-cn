@@ -1,7 +1,7 @@
 ---
 title: "MCN代运营机构如何用数据向客户证明价值"
 description: "签单容易续约难，把执行记录变成可视化的复盘材料，是代运营行业最被低估的续约武器。"
-pubDate: 2026-07-03
+pubDate: 2026-07-14
 category: "运营方法论"
 tags: ["MCN", "代运营", "客户复盘"]
 heroImage: "../../assets/blog-mcn-prove-value-with-data.webp"

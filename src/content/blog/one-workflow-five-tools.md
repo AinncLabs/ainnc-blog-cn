@@ -1,7 +1,7 @@
 ---
 title: "从内容生产到发布：一个工作流取代五个工具"
 description: "梳理一条内容从创意到跨四个平台发布的真实路径，减少环节之间的人工交接摩擦。"
-pubDate: 2026-07-03
+pubDate: 2026-07-24
 category: "产品能力解读"
 tags: ["内容工作流", "素材管理", "批量发布"]
 heroImage: "../../assets/blog-one-workflow-five-tools.webp"

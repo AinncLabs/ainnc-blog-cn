@@ -2,13 +2,42 @@
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import PostCard from '../../components/PostCard.astro';
+import { getPostCode } from '../../blogVisuals';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const postOrder = [
+	'scaling-social-account-operations',
+	'spreadsheets-break-50',
+	'real-social-ops-platform',
+	'mcn-prove-value-with-data',
+	'cloud-phone-vs-browser',
+	'proxy-ip-types',
+	'one-workflow-five-tools',
+	'tiktok-risk-guide',
+	'global-brand-scale',
+	'localization-how-deep',
+];
+const posts = (await getCollection('blog', (entry) => !entry.data.draft && postOrder.includes(entry.id))).sort((a, b) => {
+	const aOrder = postOrder.indexOf(a.id);
+	const bOrder = postOrder.indexOf(b.id);
+	return (aOrder === -1 ? 999 : aOrder) - (bOrder === -1 ? 999 : bOrder);
+});
+const featuredPost = posts[0];
+const gridPosts = posts.slice(1);
+const spanMap: Record<string, 'wide' | 'tall' | 'none'> = {
+	'spreadsheets-break-50': 'tall',
+	'real-social-ops-platform': 'wide',
+	'tiktok-risk-guide': 'wide',
+};
+const categoryCounters: Record<string, number> = featuredPost ? { [featuredPost.data.category]: 1 } : {};
+const nextCategoryIndex = (category: string) => {
+	const value = categoryCounters[category] ?? 0;
+	categoryCounters[category] = value + 1;
+	return value;
+};
 const categoryOrder = ['运营方法论', '平台专题', '产品能力解读', '出海观察', '操作教程', '运营实践', '产品更新'];
 const allCategoryLabels = new Set(posts.map((post) => post.data.category));
 const categories = [
@@ -16,6 +45,7 @@ const categories = [
 	...categoryOrder.filter((category) => allCategoryLabels.has(category)),
 	...Array.from(allCategoryLabels).filter((category) => !categoryOrder.includes(category)),
 ];
+const featuredCode = featuredPost ? getPostCode(featuredPost.data.category, 0) : 'OPS-01';
 ---
 
 <!doctype html>
@@ -52,12 +82,12 @@ const categories = [
 				<span class="cursor-glow" aria-hidden="true"></span>
 				<div class="page-head-copy">
 					<span class="section-kicker">麦芽营销团队出品</span>
-					<h1>规模化运营社媒账号的实战方法</h1>
+					<h1>当账号数量 从 1 变成 <em id="counter-num">1000+</em></h1>
 					<p>写给需要在 TikTok、Instagram、Reddit 和 X 上管理成百上千个账号的代运营机构、MCN 和出海品牌团队。</p>
 					<div class="hero-stats" aria-label="博客内容概览">
-						<span><strong>{posts.length}</strong>篇文章</span>
+						<span><strong>04</strong>内容栏目</span>
+						<span><strong>{posts.length}</strong>篇实战文章</span>
 						<span><strong>4</strong>个主题</span>
-						<span><strong>Ainnc</strong>实战方法</span>
 					</div>
 				</div>
 				<div class="tile-visual" aria-hidden="true">
@@ -71,6 +101,29 @@ const categories = [
 				</div>
 			</section>
 
+			{
+				featuredPost && (
+					<section class="spotlight-card">
+						<div class="spotlight-copy">
+							<div class="article-code">
+								<span>FEATURED</span>
+								<span aria-hidden="true">/</span>
+								<span>{featuredCode}</span>
+							</div>
+							<h2>
+								<a href={`/blog/${featuredPost.id}/`}>{featuredPost.data.title}</a>
+							</h2>
+							<p>{featuredPost.data.description}</p>
+						</div>
+						<div class="spotlight-meta">
+							<span><FormattedDate date={featuredPost.data.pubDate} /></span>
+							<span>7 MIN</span>
+							<a href={`/blog/${featuredPost.id}/`}>阅读全文 -&gt;</a>
+						</div>
+					</section>
+				)
+			}
+
 			<section class="filter-bar" aria-label="文章分类筛选">
 				{
 					categories.map((category, index) => (
@@ -82,8 +135,8 @@ const categories = [
 				}
 			</section>
 
-			<section class="post-grid" id="post-grid">
-				{posts.map((post, index) => <PostCard post={post} index={index} featured={index === 0} />)}
+			<section class="post-grid bento-grid" id="post-grid">
+				{gridPosts.map((post) => <PostCard post={post} index={nextCategoryIndex(post.data.category)} variant="bento" span={spanMap[post.id] ?? 'none'} />)}
 			</section>
 		</main>
 		<Footer />
@@ -128,8 +181,19 @@ const categories = [
 				document.querySelectorAll<HTMLElement>('.post-card').forEach((card) => {
 					card.addEventListener('pointermove', (event) => {
 						const rect = card.getBoundingClientRect();
+						const x = event.clientX - rect.left;
+						const y = event.clientY - rect.top;
+						const rotateX = ((y / rect.height) - 0.5) * -4;
+						const rotateY = ((x / rect.width) - 0.5) * 4;
 						card.style.setProperty('--glare-x', `${event.clientX - rect.left}px`);
 						card.style.setProperty('--glare-y', `${event.clientY - rect.top}px`);
+						if (card.classList.contains('bento')) {
+							card.style.transform = `translateY(-4px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+						}
+					});
+
+					card.addEventListener('pointerleave', () => {
+						card.style.transform = '';
 					});
 				});
 			}
@@ -186,6 +250,19 @@ const categories = [
 			}
 
 			typeConsoleLine();
+
+			const counter = document.getElementById('counter-num');
+			if (counter && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+				let value = 1;
+				const step = () => {
+					value = Math.min(1000, value + Math.ceil((1000 - value) / 9));
+					counter.textContent = `${value}+`;
+					if (value < 1000) {
+						window.requestAnimationFrame(step);
+					}
+				};
+				window.requestAnimationFrame(step);
+			}
 		</script>
 	</body>
 </html>
@@ -301,6 +378,12 @@ const categories = [
 	.page-head p {
 		max-width: 720px;
 		font-size: 1.05rem;
+	}
+
+	.page-head h1 em {
+		color: var(--accent-dark);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-style: normal;
 	}
 
 	.hero-stats {
@@ -422,6 +505,92 @@ const categories = [
 		margin-bottom: 1rem;
 	}
 
+	.spotlight-card {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 1.5rem;
+		align-items: end;
+		margin-bottom: 1rem;
+		overflow: hidden;
+		border: 1px solid var(--line);
+		border-radius: 8px;
+		background:
+			linear-gradient(135deg, rgba(6, 39, 42, 92%), rgba(4, 63, 60, 88%)),
+			white;
+		padding: clamp(1.3rem, 3vw, 2rem);
+		box-shadow: var(--shadow);
+	}
+
+	.spotlight-card::before {
+		content: '';
+		position: absolute;
+		inset: auto 8% -35% auto;
+		width: 16rem;
+		height: 16rem;
+		border-radius: 999px;
+		background: rgba(46, 233, 208, 18%);
+		filter: blur(30px);
+	}
+
+	.spotlight-copy,
+	.spotlight-meta {
+		position: relative;
+		z-index: 1;
+	}
+
+	.spotlight-copy {
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	.spotlight-copy .article-code {
+		display: inline-flex;
+		gap: 0.5rem;
+		align-items: center;
+		width: fit-content;
+		border: 1px solid rgba(46, 233, 208, 36%);
+		border-radius: 999px;
+		background: rgba(227, 251, 247, 10%);
+		padding: 0.3rem 0.7rem;
+		color: #72f7e8;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+		font-weight: 900;
+		letter-spacing: 0.08em;
+	}
+
+	.spotlight-card h2 {
+		max-width: 780px;
+		font-size: clamp(1.5rem, 3vw, 2.45rem);
+	}
+
+	.spotlight-card h2 a {
+		color: white;
+		text-decoration: none;
+	}
+
+	.spotlight-card p {
+		max-width: 780px;
+		color: #b8eee7;
+	}
+
+	.spotlight-meta {
+		display: grid;
+		gap: 0.55rem;
+		justify-items: end;
+		color: #d8fffa;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+		font-weight: 900;
+		white-space: nowrap;
+	}
+
+	.spotlight-meta a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
 	.filter-pill {
 		display: inline-flex;
 		gap: 0.45rem;
@@ -458,6 +627,14 @@ const categories = [
 	@media (max-width: 900px) {
 		.page-head {
 			grid-template-columns: 1fr;
+		}
+
+		.spotlight-card {
+			grid-template-columns: 1fr;
+		}
+
+		.spotlight-meta {
+			justify-items: start;
 		}
 
 		.tile-visual {

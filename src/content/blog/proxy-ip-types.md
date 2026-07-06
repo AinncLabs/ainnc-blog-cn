@@ -1,7 +1,7 @@
 ---
 title: "静态IP、动态IP、移动IP：代理该怎么选"
 description: "代理选型没有唯一正确答案，只有和账号规模、地域策略是否匹配。"
-pubDate: 2026-07-03
+pubDate: 2026-07-21
 category: "产品能力解读"
 tags: ["代理 IP", "静态 IP", "移动 IP"]
 heroImage: "../../assets/blog-proxy-ip-types.webp"

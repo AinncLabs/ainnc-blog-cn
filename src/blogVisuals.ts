@@ -17,9 +17,9 @@ const CATEGORY_TONES: Record<string, string> = {
 
 const TONE_PREFIXES: Record<string, string> = {
 	ops: 'OPS',
-	product: 'PRD',
-	platform: 'PLT',
-	insights: 'GLB',
+	product: 'PRODUCT',
+	platform: 'PLATFORM',
+	insights: 'INSIGHTS',
 	default: 'SYS',
 };
 

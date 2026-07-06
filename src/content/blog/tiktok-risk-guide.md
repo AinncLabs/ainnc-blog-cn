@@ -1,7 +1,7 @@
 ---
 title: "TikTok账号批量运营，如何避开常见风控雷区"
 description: "账号安全的核心逻辑很朴素：真实的独立性、自然的操作节奏、基本的内容原创度。"
-pubDate: 2026-07-03
+pubDate: 2026-07-28
 category: "平台专题"
 tags: ["TikTok", "风控", "账号安全"]
 heroImage: "../../assets/blog-tiktok-risk-guide.webp"

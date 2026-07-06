@@ -1,7 +1,7 @@
 ---
 title: "出海社媒运营，本地化到底该做到多细"
 description: "翻译解决的是“听得懂”，本地化解决的是“愿意看下去”，这是两个完全不同的问题。"
-pubDate: 2026-07-03
+pubDate: 2026-08-04
 category: "出海观察"
 tags: ["本地化", "出海品牌", "社媒内容"]
 heroImage: "../../assets/blog-localization-how-deep.webp"

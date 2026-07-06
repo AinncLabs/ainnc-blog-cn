@@ -10,32 +10,40 @@ interface Props {
 	featured?: boolean;
 	index?: number;
 	locale?: Locale;
+	variant?: 'media' | 'bento';
+	span?: 'wide' | 'tall' | 'none';
 }
 
-const { post, featured = false, index = 0, locale = 'zh' } = Astro.props;
+const { post, featured = false, index = 0, locale = 'zh', variant = 'media', span = 'none' } = Astro.props;
 const meta = getPostMeta(post, locale);
 const postHref = locale === 'en' ? `/en/blog/${post.id}/` : `/blog/${post.id}/`;
 const tagLabel = locale === 'en' ? 'Post tags' : '文章标签';
 const readLabel = locale === 'en' ? 'Read article' : '阅读全文';
 const tone = getCategoryTone(meta.category);
 const postCode = getPostCode(meta.category, index);
+const showMedia = variant === 'media';
 ---
 
-<article class:list={['post-card', { featured }]} data-category={meta.category} data-tone={tone}>
+<article class:list={['post-card', variant, span, { featured }]} data-category={meta.category} data-tone={tone}>
+	<span class="accent-bar" aria-hidden="true"></span>
 	<span class="card-glare" aria-hidden="true"></span>
-	<a href={postHref} class="media-link" aria-label={meta.title}>
-		{
-			post.data.heroImage && (
-				<Image
-					width={featured ? 960 : 640}
-					height={featured ? 480 : 360}
-					src={post.data.heroImage}
-					alt=""
-					loading={featured ? 'eager' : 'lazy'}
-				/>
-			)
-		}
-	</a>
+	{
+		showMedia && (
+			<a href={postHref} class="media-link" aria-label={meta.title}>
+				{
+					post.data.heroImage && (
+						<Image
+							width={featured ? 960 : 640}
+							height={featured ? 480 : 360}
+							src={post.data.heroImage}
+							alt=""
+							loading={featured ? 'eager' : 'lazy'}
+						/>
+					)
+				}
+			</a>
+		)
+	}
 	<div class="post-body">
 		<div class="card-code">
 			<span class="code-dot" aria-hidden="true"></span>

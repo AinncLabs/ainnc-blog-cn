@@ -1,7 +1,7 @@
 ---
 title: "为全球品牌搭建可规模化的社媒运营体系"
 description: "品牌进入新市场时，最容易在本地化社媒运营上踩的坑，以及规模化真正需要的四层能力。"
-pubDate: 2026-07-03
+pubDate: 2026-07-31
 category: "出海观察"
 tags: ["全球品牌", "出海运营", "本地化"]
 heroImage: "../../assets/blog-global-brand-scale.webp"

@@ -423,9 +423,9 @@ const EN_POSTS = {
 		],
 	},
 	'scaling-social-account-operations': {
-		title: 'Practical Methods for Scaling Social Account Operations',
+		title: 'How Agencies Manage Hundreds of Social Accounts Without Losing Control',
 		description:
-			'For agencies, MCNs, and global brands managing hundreds or thousands of accounts across TikTok, Instagram, Reddit, and X.',
+			'Most agency teams hit the same wall between 20 and 50 accounts. Here is where things break and what a real operations system should look like.',
 		category: 'Operations Playbook',
 		tags: ['Scale', 'Social Accounts', 'Agencies', 'MCN', 'Global Brands'],
 		sections: [
