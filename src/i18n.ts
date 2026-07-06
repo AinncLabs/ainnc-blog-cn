@@ -171,6 +171,58 @@ const EN_POSTS = {
 			},
 		],
 	},
+	'task-center': {
+		title: 'Task Center: Why One Button Should Not Do Everything',
+		description:
+			'Why Ainnc breaks login, publishing, warming, and profile updates into a guided task flow instead of hiding operations inside one black-box button.',
+		category: 'Product Capabilities',
+		tags: ['Task Center', 'Bulk Publishing', 'Account Operations', 'Product Capabilities'],
+		sections: [
+			{
+				paragraphs: [
+					'Many teams start by asking for one fully automatic button: choose the accounts, click once, and let the system handle the rest.',
+					'That sounds convenient, but it is also where bulk operations often become fragile. A reliable bulk tool should not hide every action inside a black box. It should break the workflow into clear steps so the team can immediately see which stage and which account caused a problem.',
+				],
+			},
+			{
+				heading: 'Why Tasks Should Be Split Instead of Merged',
+				paragraphs: [
+					'Ainnc separates bulk work into login, publishing, warming, and profile-update tasks. This is not only a UI choice. It reflects how real operations fail and recover.',
+					'If a login task fails, the account itself probably needs attention. If a publishing task fails, the content or parameters may be the issue while the account is still healthy. When those actions are merged into one task, the failure reason becomes harder to locate.',
+					'Different tasks also need different timing. Publishing can run on a schedule, while warming activity should be spread across a more natural rhythm. Some steps must also happen before others: accounts need to log in successfully before they can publish or warm.',
+				],
+			},
+			{
+				heading: 'Bulk Does Not Mean Copy and Paste',
+				paragraphs: [
+					'One common mistake is treating bulk publishing as repeated publishing of the exact same post.',
+					'If 50 accounts publish the same video with the same title, tags, and cover, it looks like one asset repeated 50 times instead of 50 accounts operating naturally.',
+					'In the parameter step, Ainnc lets operators adjust details for each account inside the same batch. Bulk work should reduce manual time, not make every account behave identically.',
+				],
+			},
+			{
+				heading: 'Pre-Checks Save Cleanup Time Later',
+				paragraphs: [
+					'Before execution, task cards show whether an account has a bound device and whether it is currently logged in.',
+					'Those checks happen before the operator starts the task. The system can identify which accounts are ready and which ones need attention, instead of starting 100 tasks and discovering that 30 failed immediately.',
+				],
+			},
+			{
+				heading: 'Where Execution Results Go',
+				paragraphs: [
+					'Every completed task is recorded in the task list with its batch, account, platform, device, and success or failure status.',
+					'Those records become the evidence teams can use for review and reporting. The more clearly tasks are separated, the more clearly the team can explain what happened: which account, which task, when it ran, and why it failed if something went wrong.',
+				],
+			},
+			{
+				heading: 'How Ainnc Handles It',
+				paragraphs: [
+					'Ainnc does not reduce the task center to one vague button. It separates login, publishing, warming, and profile updates so each workflow has its own rhythm, validation, and error path.',
+					'Operators can adjust task parameters by account, and every execution creates a traceable result. Scaled operations do not need fewer buttons at any cost. They need a system where every issue can be found quickly.',
+				],
+			},
+		],
+	},
 	'mcn-prove-value-with-data': {
 		title: 'How MCN Agencies Prove Value to Clients With Data',
 		description:
