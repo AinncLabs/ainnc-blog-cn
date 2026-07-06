@@ -1,5 +1,5 @@
 :root {
-	--page-max: 1600px;
+	--page-max: 1120px;
 	--accent: #00c9aa;
 	--accent-dark: #007d76;
 	--text: #06272a;
@@ -55,7 +55,7 @@ body {
 main {
 	width: min(var(--page-max), calc(100% - 2.5rem));
 	margin: 0 auto;
-	padding: 3rem 0;
+	padding: 2.5rem 0;
 }
 
 h1,

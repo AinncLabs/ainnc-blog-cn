@@ -177,6 +177,7 @@ const postCode = getPostCode(category, postIndex);
 		--article-accent-soft: var(--surface-blue);
 		display: grid;
 		gap: 1rem;
+		justify-items: center;
 	}
 
 	.article-shell[data-tone='ops'] {
@@ -201,6 +202,7 @@ const postCode = getPostCode(category, postIndex);
 
 	.article-header {
 		display: grid;
+		width: min(780px, 100%);
 		gap: 1rem;
 		border: 1px solid var(--line);
 		border-radius: 8px;
@@ -231,7 +233,7 @@ const postCode = getPostCode(category, postIndex);
 	}
 
 	.hero-image {
-		width: 100%;
+		width: min(780px, 100%);
 		max-height: 520px;
 		object-fit: cover;
 		box-shadow: var(--shadow);
