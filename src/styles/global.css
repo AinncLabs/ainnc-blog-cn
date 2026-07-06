@@ -182,6 +182,8 @@ hr {
 .post-card {
 	--card-accent: var(--accent-dark);
 	--card-accent-soft: var(--surface-blue);
+	--glare-x: 50%;
+	--glare-y: 50%;
 	position: relative;
 	display: flex;
 	min-height: 100%;
@@ -194,7 +196,22 @@ hr {
 	transition:
 		border-color 0.25s ease,
 		box-shadow 0.25s ease,
-		transform 0.25s ease;
+	transform 0.25s ease;
+}
+
+.card-glare {
+	position: absolute;
+	z-index: 2;
+	inset: 0;
+	background: radial-gradient(
+		circle 220px at var(--glare-x) var(--glare-y),
+		rgba(255, 255, 255, 54%),
+		rgba(255, 255, 255, 18%) 30%,
+		transparent 66%
+	);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.18s ease;
 }
 
 .post-card[hidden] {
@@ -255,6 +272,10 @@ hr {
 	border-color: color-mix(in srgb, var(--card-accent) 70%, white);
 	box-shadow: 0 20px 42px color-mix(in srgb, var(--card-accent) 18%, transparent);
 	transform: translateY(-4px);
+}
+
+.post-card:hover .card-glare {
+	opacity: 1;
 }
 
 .post-card:hover::before,

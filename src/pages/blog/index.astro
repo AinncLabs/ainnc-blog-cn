@@ -60,8 +60,14 @@ const categories = [
 						<span><strong>Ainnc</strong>实战方法</span>
 					</div>
 				</div>
-				<div class="tile-grid" aria-hidden="true">
-					{Array.from({ length: 42 }).map((_, index) => <span class:list={['tile', { bright: index % 8 === 0 || index % 13 === 0 }]} style={`--delay: ${(index % 11) * 0.18}s`} />)}
+				<div class="tile-visual" aria-hidden="true">
+					<div class="console-card">
+						<div class="console-dots"><span></span><span></span><span></span></div>
+						<div class="console-line"><span id="console-text"></span><span class="console-cursor"></span></div>
+					</div>
+					<div class="tile-grid">
+						{Array.from({ length: 42 }).map((_, index) => <span class:list={['tile', { bright: index % 8 === 0 || index % 13 === 0 }]} style={`--delay: ${(index % 11) * 0.18}s`} />)}
+					</div>
 				</div>
 			</section>
 
@@ -118,7 +124,68 @@ const categories = [
 						panel.classList.remove('is-glowing');
 					});
 				});
+
+				document.querySelectorAll<HTMLElement>('.post-card').forEach((card) => {
+					card.addEventListener('pointermove', (event) => {
+						const rect = card.getBoundingClientRect();
+						card.style.setProperty('--glare-x', `${event.clientX - rect.left}px`);
+						card.style.setProperty('--glare-y', `${event.clientY - rect.top}px`);
+					});
+				});
 			}
+
+			const tileGrids = document.querySelectorAll<HTMLElement>('.tile-grid');
+			window.addEventListener(
+				'scroll',
+				() => {
+					const offset = Math.min(window.scrollY * 0.08, 34);
+					tileGrids.forEach((grid) => {
+						grid.style.transform = `translateY(${offset}px)`;
+					});
+				},
+				{ passive: true },
+			);
+
+			const consoleLines = [
+				'batch_publish(tiktok, accounts=42) ... 完成',
+				'proxy_check(static_ip) ... 正常',
+				'account_warmup(instagram, x38) ... 运行中',
+				'task_queue: 309 已完成',
+				'cloud_env(bind_device) ... 已同步',
+			];
+			const consoleText = document.getElementById('console-text');
+			let lineIndex = 0;
+			let charIndex = 0;
+			let deleting = false;
+
+			function typeConsoleLine() {
+				if (!consoleText) return;
+				const line = consoleLines[lineIndex];
+
+				if (!deleting) {
+					charIndex += 1;
+					consoleText.textContent = line.slice(0, charIndex);
+					if (charIndex >= line.length) {
+						deleting = true;
+						window.setTimeout(typeConsoleLine, 1400);
+						return;
+					}
+					window.setTimeout(typeConsoleLine, 38);
+					return;
+				}
+
+				charIndex -= 1;
+				consoleText.textContent = line.slice(0, charIndex);
+				if (charIndex <= 0) {
+					deleting = false;
+					lineIndex = (lineIndex + 1) % consoleLines.length;
+					window.setTimeout(typeConsoleLine, 300);
+					return;
+				}
+				window.setTimeout(typeConsoleLine, 16);
+			}
+
+			typeConsoleLine();
 		</script>
 	</body>
 </html>
@@ -257,12 +324,69 @@ const categories = [
 		color: var(--text);
 	}
 
-	.tile-grid {
+	.tile-visual {
 		position: relative;
 		z-index: 1;
+	}
+
+	.tile-grid {
+		position: relative;
 		display: grid;
 		grid-template-columns: repeat(7, minmax(0, 1fr));
 		gap: 0.55rem;
+		transition: transform 0.12s linear;
+	}
+
+	.console-card {
+		position: absolute;
+		top: -0.55rem;
+		right: 0.35rem;
+		z-index: 2;
+		width: min(250px, 74%);
+		border: 1px solid rgba(46, 233, 208, 22%);
+		border-radius: 8px;
+		background: linear-gradient(135deg, #052e2b, #073b37);
+		padding: 0.85rem 1rem;
+		box-shadow: 0 22px 44px -18px rgba(6, 39, 42, 55%);
+	}
+
+	.console-dots {
+		display: flex;
+		gap: 0.35rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.console-dots span {
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 22%);
+	}
+
+	.console-line {
+		min-height: 1.1rem;
+		overflow: hidden;
+		color: var(--accent);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.72rem;
+		font-weight: 800;
+		white-space: nowrap;
+	}
+
+	.console-cursor {
+		display: inline-block;
+		width: 0.4rem;
+		height: 0.85rem;
+		margin-left: 0.15rem;
+		background: var(--accent);
+		vertical-align: -0.08rem;
+		animation: console-blink 0.9s step-end infinite;
+	}
+
+	@keyframes console-blink {
+		50% {
+			opacity: 0;
+		}
 	}
 
 	.tile {
@@ -336,7 +460,7 @@ const categories = [
 			grid-template-columns: 1fr;
 		}
 
-		.tile-grid {
+		.tile-visual {
 			display: none;
 		}
 	}

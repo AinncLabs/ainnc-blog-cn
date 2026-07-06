@@ -22,6 +22,7 @@ const postCode = getPostCode(meta.category, index);
 ---
 
 <article class:list={['post-card', { featured }]} data-category={meta.category} data-tone={tone}>
+	<span class="card-glare" aria-hidden="true"></span>
 	<a href={postHref} class="media-link" aria-label={meta.title}>
 		{
 			post.data.heroImage && (
