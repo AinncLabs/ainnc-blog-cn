@@ -1,29 +1,437 @@
 ---
-import AboutHeroImage from '../../assets/blog-placeholder-about.jpg';
-import Layout from '../../layouts/BlogPost.astro';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+
+const capabilities = [
+	['ops', 'Cloud Phone Environment Management', 'Independent cloud environments for accounts, with unified device and network configuration.'],
+	['platform', 'Bulk Accounts and Proxies', 'Static, dynamic, and mobile proxies assigned across organized account groups.'],
+	['product', 'AI Content Operations', 'Generate copy and tags in multiple styles while keeping assets organized in one library.'],
+	['insights', 'Automated Task Center', 'Run login, warming, and publishing tasks in batches with traceable execution records.'],
+];
+const audiences = [
+	['Cross-Border Sellers', 'Each market needs accounts, devices, timing, and content. Ainnc helps teams run accounts in independent cloud environments and organize publishing by target market.'],
+	['MCNs and Agencies', 'As signed accounts grow, maintenance and scheduling become expensive. Bulk assets, task queues, and shared dashboards keep repetitive work inside the system.'],
+	['Global Brand Teams', 'When teams lack local staff, local content, or devices, Ainnc gives them a structured workflow for accounts, content, publishing, and review.'],
+	['Why Infrastructure', 'Accounts, proxies, assets, and tasks share one record system instead of living across sheets, drives, and chat threads. Scale should not make the workflow messy.'],
+];
+const matrixLabels = new Map([
+	[7, 'TT'],
+	[24, 'IG'],
+	[41, 'RD'],
+	[58, 'X'],
+	[75, 'IP'],
+	[92, 'AI'],
+]);
 ---
 
-<Layout
-	title="About Ainnc"
-	description="Ainnc is a bulk operations console for social media teams, covering accounts, proxies, assets, tasks, and usage limits."
-	pubDate={new Date('July 03 2026')}
-	category="Ainnc"
-	tags={['Product', 'Operations', 'Social Media']}
-	heroImage={AboutHeroImage}
-	locale="en"
->
-	<p>
-		Ainnc is a bulk operations console for social media teams. It brings account management,
-		proxy IPs, file assets, task publishing, and usage limits into one workflow.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="About Ainnc" description="Ainnc is social operations infrastructure for teams managing accounts, proxies, assets, and publishing tasks at scale." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="about-hero" id="about-hero">
+				<img class="hero-watermark" src="/ainnc-logo-icon.webp" alt="" aria-hidden="true" />
+				<span class="hero-cursor-glow" aria-hidden="true"></span>
+				<div class="matrix-wrap" aria-hidden="true">
+					<div class="matrix-grid">
+						{
+							Array.from({ length: 112 }).map((_, index) => (
+								<span
+									class:list={['matrix-tile', { on: index % 10 === 0 || index % 19 === 0, label: matrixLabels.has(index) }]}
+									style={`--delay: ${(index % 13) * 0.16}s`}
+								>
+									{matrixLabels.get(index)}
+								</span>
+							))
+						}
+					</div>
+				</div>
+				<div class="hero-copy">
+					<span class="section-kicker">ABOUT AINNC</span>
+					<h1>Social Operations Infrastructure for Global Teams</h1>
+					<p>
+						Ainnc is not just a posting tool. It is an operating layer where accounts,
+						proxies, assets, and tasks share the same system for teams managing social accounts at scale.
+					</p>
+					<div class="hero-actions">
+						<a href="https://www.ainnc.com/#hero" class="primary" target="_blank" rel="noopener noreferrer">Official Site</a>
+						<a href="https://t.me/qccbot2026" class="secondary" target="_blank" rel="noopener noreferrer">Telegram Support</a>
+					</div>
+				</div>
+			</section>
 
-	<p>
-		Teams can import accounts, bind devices, upload videos and images, and complete publishing,
-		login, and account warming tasks for platforms such as TikTok, Instagram, Reddit, and X.
-	</p>
+			<section class="audience-grid">
+				{
+					audiences.map(([title, description]) => (
+						<article class="value-card">
+							<h2>{title}</h2>
+							<p>{description}</p>
+						</article>
+					))
+				}
+			</section>
 
-	<p>
-		This blog documents product updates, tutorials, operating scenarios, and common questions so
-		teams can build repeatable bulk operations workflows faster.
-	</p>
-</Layout>
+			<section class="capabilities">
+				<div class="section-header">
+					<div>
+						<span class="eyebrow">Product Capabilities</span>
+						<h2>One Console From Account Management to Publishing</h2>
+					</div>
+					<p>Built for scaled operations across TikTok, Instagram, Reddit, X, and similar platforms.</p>
+				</div>
+				<div class="capability-grid">
+					{
+						capabilities.map(([tone, title, description]) => (
+							<article class="capability-card" data-tone={tone}>
+								<h3>{title}</h3>
+								<p>{description}</p>
+							</article>
+						))
+					}
+				</div>
+			</section>
+
+			<section class="stats-row" aria-label="Ainnc overview">
+				<div><strong>4</strong><span>covered platforms</span></div>
+				<div><strong>3</strong><span>core scenarios</span></div>
+				<div><strong>01</strong><span>unified console</span></div>
+			</section>
+
+			<a class="blog-cta" href="/en/blog/">
+				<span>READ MORE / BLOG</span>
+				<strong>Read Practical Playbooks for Agency-Scale Social Operations</strong>
+				<em>View all articles -&gt;</em>
+			</a>
+		</main>
+		<Footer />
+		<script>
+			const hero = document.getElementById('about-hero');
+			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+			if (hero && supportsHover) {
+				hero.addEventListener('pointermove', (event) => {
+					const rect = hero.getBoundingClientRect();
+					hero.style.setProperty('--glow-x', `${event.clientX - rect.left}px`);
+					hero.style.setProperty('--glow-y', `${event.clientY - rect.top}px`);
+					hero.classList.add('is-glowing');
+				});
+				hero.addEventListener('pointerleave', () => hero.classList.remove('is-glowing'));
+			}
+		</script>
+	</body>
+</html>
+
+<style>
+	.about-hero {
+		--glow-x: 50%;
+		--glow-y: 50%;
+		position: relative;
+		isolation: isolate;
+		display: grid;
+		min-height: 500px;
+		place-items: center;
+		overflow: hidden;
+		margin-bottom: 2rem;
+		border: 1px solid var(--line);
+		border-radius: 8px;
+		background:
+			linear-gradient(135deg, rgba(0, 201, 170, 10%), rgba(0, 69, 76, 5%)),
+			white;
+		box-shadow: var(--shadow);
+		text-align: center;
+	}
+
+	.hero-watermark {
+		position: absolute;
+		top: -5rem;
+		right: -6rem;
+		z-index: 0;
+		width: min(42rem, 68vw);
+		opacity: 0.05;
+		filter: grayscale(1) brightness(0.45);
+		transform: rotate(-7deg);
+	}
+
+	.hero-cursor-glow {
+		position: absolute;
+		z-index: 1;
+		inset: -14%;
+		background: radial-gradient(circle 280px at var(--glow-x) var(--glow-y), rgba(46, 233, 208, 30%), rgba(0, 201, 170, 12%) 34%, transparent 72%);
+		filter: blur(14px);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.28s ease;
+	}
+
+	.about-hero.is-glowing .hero-cursor-glow {
+		opacity: 1;
+	}
+
+	.matrix-wrap {
+		position: absolute;
+		z-index: 1;
+		width: min(920px, 92vw);
+		opacity: 0.78;
+		pointer-events: none;
+	}
+
+	.matrix-grid {
+		display: grid;
+		grid-template-columns: repeat(14, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+
+	.matrix-tile {
+		display: grid;
+		aspect-ratio: 1;
+		place-items: center;
+		border-radius: 6px;
+		background: rgba(0, 177, 179, 8%);
+		color: transparent;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.52rem;
+		font-weight: 900;
+		animation: matrix-pulse 5s ease-in-out var(--delay) infinite;
+	}
+
+	.matrix-tile.on {
+		background: rgba(0, 177, 179, 32%);
+	}
+
+	.matrix-tile.label {
+		background: rgba(0, 177, 179, 18%);
+		color: var(--accent-dark);
+	}
+
+	.hero-copy {
+		position: relative;
+		z-index: 2;
+		display: grid;
+		max-width: 760px;
+		gap: 1rem;
+		padding: clamp(2rem, 7vw, 5rem) 1rem;
+		justify-items: center;
+	}
+
+	.section-kicker {
+		display: inline-flex;
+		gap: 0.65rem;
+		align-items: center;
+		width: fit-content;
+		color: var(--accent-dark);
+		font-weight: 900;
+	}
+
+	.section-kicker::before {
+		content: '';
+		width: 1.75rem;
+		height: 2px;
+		background: var(--accent);
+	}
+
+	.hero-copy p {
+		max-width: 640px;
+		font-size: 1.08rem;
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		justify-content: center;
+	}
+
+	.hero-actions a {
+		border-radius: 8px;
+		padding: 0.72rem 1.05rem;
+		font-weight: 900;
+		text-decoration: none;
+	}
+
+	.hero-actions .primary {
+		background: var(--accent);
+		color: white;
+	}
+
+	.hero-actions .secondary {
+		border: 1px solid var(--line);
+		background: white;
+		color: var(--text);
+	}
+
+	.audience-grid,
+	.capability-grid,
+	.stats-row {
+		display: grid;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.audience-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.capability-grid,
+	.stats-row {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.value-card,
+	.capability-card,
+	.stats-row div {
+		border: 1px solid var(--line);
+		border-radius: 8px;
+		background: white;
+		padding: 1.35rem;
+		box-shadow: 0 6px 18px rgba(15, 23, 42, 5%);
+	}
+
+	.value-card h2 {
+		position: relative;
+		padding-left: 1.15rem;
+		font-size: 1.1rem;
+	}
+
+	.value-card h2::before {
+		content: '';
+		position: absolute;
+		top: 0.45rem;
+		left: 0;
+		width: 0.48rem;
+		height: 0.48rem;
+		border-radius: 2px;
+		background: var(--accent);
+		transform: rotate(45deg);
+	}
+
+	.value-card p,
+	.capability-card p {
+		margin-top: 0.55rem;
+		font-size: 0.95rem;
+	}
+
+	.capability-card {
+		border-top: 3px solid var(--cap-accent);
+	}
+
+	.capability-card[data-tone='ops'] {
+		--cap-accent: var(--tone-ops);
+	}
+
+	.capability-card[data-tone='platform'] {
+		--cap-accent: var(--tone-platform);
+	}
+
+	.capability-card[data-tone='product'] {
+		--cap-accent: var(--tone-product);
+	}
+
+	.capability-card[data-tone='insights'] {
+		--cap-accent: var(--tone-insights);
+	}
+
+	.stats-row {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.stats-row strong,
+	.stats-row span {
+		display: block;
+	}
+
+	.stats-row strong {
+		color: var(--text);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 1.8rem;
+	}
+
+	.blog-cta {
+		position: relative;
+		display: grid;
+		gap: 0.75rem;
+		overflow: hidden;
+		margin-bottom: 2rem;
+		border-radius: 8px;
+		background: linear-gradient(135deg, #04302e, #06403c 55%, #0a5049);
+		padding: 2rem;
+		color: white;
+		text-decoration: none;
+	}
+
+	.blog-cta::before {
+		content: '';
+		position: absolute;
+		top: -8rem;
+		right: -4rem;
+		width: 22rem;
+		height: 22rem;
+		border-radius: 999px;
+		background: radial-gradient(circle, rgba(46, 233, 208, 28%), transparent 70%);
+	}
+
+	.blog-cta span,
+	.blog-cta strong,
+	.blog-cta em {
+		position: relative;
+		z-index: 1;
+	}
+
+	.blog-cta span {
+		color: var(--accent);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.82rem;
+		font-weight: 900;
+		letter-spacing: 0.08em;
+	}
+
+	.blog-cta strong {
+		max-width: 720px;
+		font-size: clamp(1.55rem, 3vw, 2rem);
+	}
+
+	.blog-cta em {
+		color: #b8eee7;
+		font-style: normal;
+		font-weight: 900;
+	}
+
+	@keyframes matrix-pulse {
+		0%,
+		100% {
+			opacity: 0.38;
+			transform: scale(0.94);
+		}
+
+		48% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@media (max-width: 900px) {
+		.audience-grid,
+		.capability-grid,
+		.stats-row {
+			grid-template-columns: 1fr;
+		}
+
+		.matrix-wrap,
+		.hero-watermark {
+			display: none;
+		}
+
+		.about-hero {
+			min-height: auto;
+		}
+	}
+
+	@media (hover: none), (pointer: coarse) {
+		.hero-cursor-glow {
+			display: none;
+		}
+	}
+</style>

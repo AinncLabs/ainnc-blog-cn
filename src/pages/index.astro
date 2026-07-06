@@ -10,15 +10,23 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const featuredPost = posts.find((post) => post.data.featured) ?? posts[0];
+const featuredIndex = featuredPost ? posts.findIndex((post) => post.id === featuredPost.id) : 0;
 const latestPosts = posts.filter((post) => post.id !== featuredPost?.id).slice(0, 3);
-const topics = [
-	'全部文章',
-	'运营方法论',
-	'平台专题',
-	'产品能力解读',
-	'出海观察',
-	'任务复盘',
+const frameworks = [
+	['ops', '运营方法论', '规模化账号运营、团队协作和交付稳定性'],
+	['platform', '平台专题', 'TikTok、Instagram、Reddit、X 的执行差异'],
+	['product', '产品能力解读', '账号、代理、文件、任务和用量管理'],
+	['insights', '出海观察', '本地化、多市场规模化和品牌出海方法'],
 ];
+const topics = ['运营方法论', '平台专题', '产品能力解读', '出海观察', '任务复盘', '操作教程'];
+const matrixLabels = new Map([
+	[8, 'TT'],
+	[25, 'IG'],
+	[42, 'RD'],
+	[59, 'X'],
+	[76, 'IP'],
+	[93, 'AI'],
+]);
 ---
 
 <!doctype html>
@@ -29,9 +37,25 @@ const topics = [
 	<body>
 		<Header />
 		<main>
-			<section class="hero">
+			<section class="home-hero" id="home-hero">
+				<img class="hero-watermark" src="/ainnc-logo-icon.webp" alt="" aria-hidden="true" />
+				<span class="hero-cursor-glow" aria-hidden="true"></span>
+				<div class="matrix-wrap" aria-hidden="true">
+					<div class="matrix-grid">
+						{
+							Array.from({ length: 112 }).map((_, index) => (
+								<span
+									class:list={['matrix-tile', { on: index % 11 === 0 || index % 17 === 0, label: matrixLabels.has(index) }]}
+									style={`--delay: ${(index % 13) * 0.16}s`}
+								>
+									{matrixLabels.get(index)}
+								</span>
+							))
+						}
+					</div>
+				</div>
 				<div class="hero-copy">
-					<span class="eyebrow">麦芽营销团队出品</span>
+					<span class="section-kicker">麦芽营销团队出品</span>
 					<h1>规模化运营社媒账号的实战方法</h1>
 					<p>
 						写给需要在 TikTok、Instagram、Reddit 和 X
@@ -39,24 +63,36 @@ const topics = [
 					</p>
 					<div class="hero-actions">
 						<a href="/blog/" class="primary">查看文章</a>
-						<a
-							href="https://www.ainnc.com/#hero"
-							class="primary site-primary"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							访问官网
+						<a href="https://www.ainnc.com/#hero" class="dark" target="_blank" rel="noopener noreferrer">
+							进入官网
 						</a>
 						<a href="/about/" class="secondary">了解 Ainnc</a>
 					</div>
+					<div class="hero-stats" aria-label="博客内容概览">
+						<span><strong>{posts.length}</strong>篇文章</span>
+						<span><strong>4</strong>个核心栏目</span>
+						<span><strong>1</strong>套运营底座</span>
+					</div>
 				</div>
-				<div class="hero-panel panel">
-					<h2>内容框架</h2>
-					<ul>
-						<li><strong>运营方法论</strong><span>规模化账号运营、团队协作和交付稳定性</span></li>
-						<li><strong>平台专题</strong><span>TikTok、Instagram、Reddit、X 的执行差异</span></li>
-						<li><strong>产品能力解读</strong><span>账号、代理、文件、任务和用量管理</span></li>
-					</ul>
+			</section>
+
+			<section class="framework-section">
+				<div class="section-header">
+					<div>
+						<span class="eyebrow">内容框架</span>
+						<h2>从运营问题进入产品能力</h2>
+					</div>
+					<p>给新读者快速建立对 Ainnc 产品能力和博客内容方向的理解。</p>
+				</div>
+				<div class="framework-grid">
+					{
+						frameworks.map(([tone, title, description]) => (
+							<article class="framework-card" data-tone={tone}>
+								<h3>{title}</h3>
+								<p>{description}</p>
+							</article>
+						))
+					}
 				</div>
 			</section>
 
@@ -68,9 +104,9 @@ const topics = [
 								<span class="eyebrow">推荐阅读</span>
 								<h2>先从这篇开始</h2>
 							</div>
-							<p>给新读者快速建立对 Ainnc 产品能力和博客内容方向的理解。</p>
+							<p>建立对规模化社媒运营、账号矩阵和 Ainnc 工作流的第一层理解。</p>
 						</div>
-						<PostCard post={featuredPost} featured />
+						<PostCard post={featuredPost} featured index={featuredIndex} />
 					</section>
 				)
 			}
@@ -84,7 +120,7 @@ const topics = [
 					<a href="/blog/">全部文章</a>
 				</div>
 				<div class="post-grid">
-					{latestPosts.map((post) => <PostCard post={post} />)}
+					{latestPosts.map((post) => <PostCard post={post} index={posts.findIndex((item) => item.id === post.id)} />)}
 				</div>
 			</section>
 
@@ -99,106 +135,242 @@ const topics = [
 			</section>
 		</main>
 		<Footer />
+		<script>
+			const hero = document.getElementById('home-hero');
+			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+			if (hero && supportsHover) {
+				hero.addEventListener('pointermove', (event) => {
+					const rect = hero.getBoundingClientRect();
+					hero.style.setProperty('--glow-x', `${event.clientX - rect.left}px`);
+					hero.style.setProperty('--glow-y', `${event.clientY - rect.top}px`);
+					hero.classList.add('is-glowing');
+				});
+				hero.addEventListener('pointerleave', () => hero.classList.remove('is-glowing'));
+			}
+		</script>
 	</body>
 </html>
 
 <style>
-	.hero {
+	.home-hero {
+		--glow-x: 50%;
+		--glow-y: 50%;
+		position: relative;
+		isolation: isolate;
 		display: grid;
-		grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-		gap: 1rem;
-		align-items: stretch;
+		min-height: 520px;
+		place-items: center;
+		overflow: hidden;
 		margin-bottom: 2rem;
-	}
-
-	.hero-copy,
-	.hero-panel {
-		padding: 2rem;
-	}
-
-	.hero-copy {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 1rem;
 		border: 1px solid var(--line);
 		border-radius: 8px;
 		background:
-			linear-gradient(135deg, rgba(0, 201, 170, 14%), rgba(0, 69, 76, 8%)),
+			linear-gradient(135deg, rgba(0, 201, 170, 10%), rgba(0, 69, 76, 5%)),
 			white;
 		box-shadow: var(--shadow);
+		text-align: center;
+	}
+
+	.hero-watermark {
+		position: absolute;
+		top: -5rem;
+		right: -6rem;
+		z-index: 0;
+		width: min(42rem, 68vw);
+		opacity: 0.05;
+		filter: grayscale(1) brightness(0.45);
+		transform: rotate(-7deg);
+	}
+
+	.hero-cursor-glow {
+		position: absolute;
+		z-index: 1;
+		inset: -14%;
+		background: radial-gradient(circle 280px at var(--glow-x) var(--glow-y), rgba(46, 233, 208, 30%), rgba(0, 201, 170, 12%) 34%, transparent 72%);
+		filter: blur(14px);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.28s ease;
+	}
+
+	.home-hero.is-glowing .hero-cursor-glow {
+		opacity: 1;
+	}
+
+	.matrix-wrap {
+		position: absolute;
+		z-index: 1;
+		width: min(920px, 92vw);
+		opacity: 0.84;
+		pointer-events: none;
+	}
+
+	.matrix-grid {
+		display: grid;
+		grid-template-columns: repeat(14, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+
+	.matrix-tile {
+		display: grid;
+		aspect-ratio: 1;
+		place-items: center;
+		border-radius: 6px;
+		background: rgba(0, 177, 179, 8%);
+		color: transparent;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.52rem;
+		font-weight: 900;
+		animation: matrix-pulse 5s ease-in-out var(--delay) infinite;
+	}
+
+	.matrix-tile.on {
+		background: rgba(0, 177, 179, 32%);
+	}
+
+	.matrix-tile.label {
+		background: rgba(0, 177, 179, 18%);
+		color: var(--accent-dark);
+	}
+
+	.hero-copy {
+		position: relative;
+		z-index: 2;
+		display: grid;
+		max-width: 720px;
+		gap: 1rem;
+		padding: clamp(2rem, 7vw, 5rem) 1rem;
+		justify-items: center;
+	}
+
+	.section-kicker {
+		display: inline-flex;
+		gap: 0.65rem;
+		align-items: center;
+		width: fit-content;
+		color: var(--accent-dark);
+		font-weight: 900;
+	}
+
+	.section-kicker::before {
+		content: '';
+		width: 1.75rem;
+		height: 2px;
+		background: var(--accent);
 	}
 
 	.hero-copy p {
-		max-width: 720px;
-		font-size: 1.05rem;
+		max-width: 620px;
+		font-size: 1.08rem;
 	}
 
-	.hero-actions {
+	.hero-actions,
+	.hero-stats {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.75rem;
-		margin-top: 0.5rem;
+		justify-content: center;
 	}
 
 	.hero-actions a {
 		border-radius: 8px;
-		padding: 0.7rem 1rem;
-		font-weight: 800;
+		padding: 0.72rem 1.05rem;
+		font-weight: 900;
 		text-decoration: none;
 	}
 
-	.primary {
+	.hero-actions .primary {
 		background: var(--accent);
 		color: white;
 	}
 
-	.primary:hover {
-		background: var(--accent-dark);
+	.hero-actions .dark {
+		background: #063f3c;
 		color: white;
 	}
 
-	.site-primary {
-		background: #063f3c;
-	}
-
-	.site-primary:hover {
-		background: #021f1e;
-	}
-
-	.secondary {
+	.hero-actions .secondary {
 		border: 1px solid var(--line);
 		background: white;
 		color: var(--text);
 	}
 
-	.hero-panel ul {
-		display: grid;
-		gap: 0.75rem;
-		margin-top: 1rem;
-		list-style: none;
+	.hero-actions a:hover {
+		transform: translateY(-2px);
 	}
 
-	.hero-panel li {
-		border-radius: 8px;
-		background: var(--surface-soft);
-		padding: 0.9rem;
-	}
-
-	.hero-panel strong,
-	.hero-panel span {
-		display: block;
-	}
-
-	.hero-panel span {
-		margin-top: 0.2rem;
+	.hero-stats {
+		margin-top: 0.25rem;
 		color: var(--muted);
-		font-size: 0.92rem;
+		font-weight: 800;
 	}
 
+	.hero-stats span {
+		border: 1px solid rgba(0, 201, 170, 28%);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 72%);
+		padding: 0.45rem 0.8rem;
+	}
+
+	.hero-stats strong {
+		margin-right: 0.2rem;
+		color: var(--text);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	}
+
+	.framework-section,
 	.featured-section,
 	main > section {
 		margin-bottom: 2rem;
+	}
+
+	.framework-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1rem;
+	}
+
+	.framework-card {
+		border: 1px solid var(--line);
+		border-top: 3px solid var(--framework-accent);
+		border-radius: 8px;
+		background: white;
+		padding: 1.15rem;
+		box-shadow: 0 6px 18px rgba(15, 23, 42, 5%);
+		transition:
+			box-shadow 0.22s ease,
+			transform 0.22s ease;
+	}
+
+	.framework-card[data-tone='ops'] {
+		--framework-accent: var(--tone-ops);
+	}
+
+	.framework-card[data-tone='platform'] {
+		--framework-accent: var(--tone-platform);
+	}
+
+	.framework-card[data-tone='product'] {
+		--framework-accent: var(--tone-product);
+	}
+
+	.framework-card[data-tone='insights'] {
+		--framework-accent: var(--tone-insights);
+	}
+
+	.framework-card:hover {
+		box-shadow: 0 16px 30px -14px color-mix(in srgb, var(--framework-accent) 28%, transparent);
+		transform: translateY(-3px);
+	}
+
+	.framework-card h3 {
+		font-size: 1rem;
+	}
+
+	.framework-card p {
+		margin-top: 0.45rem;
+		font-size: 0.92rem;
 	}
 
 	.topics {
@@ -224,11 +396,39 @@ const topics = [
 		font-weight: 700;
 	}
 
+	@keyframes matrix-pulse {
+		0%,
+		100% {
+			opacity: 0.38;
+			transform: scale(0.94);
+		}
+
+		48% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
 	@media (max-width: 900px) {
-		.hero,
+		.framework-grid,
 		.topics,
 		.topics ul {
 			grid-template-columns: 1fr;
+		}
+
+		.matrix-wrap,
+		.hero-watermark {
+			display: none;
+		}
+
+		.home-hero {
+			min-height: auto;
+		}
+	}
+
+	@media (hover: none), (pointer: coarse) {
+		.hero-cursor-glow {
+			display: none;
 		}
 	}
 </style>
