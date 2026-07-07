@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
@@ -20,7 +19,6 @@ const {
 	description,
 	pubDate,
 	updatedDate,
-	heroImage,
 	category = 'Ainnc',
 	tags = [],
 	locale = 'zh',
@@ -61,7 +59,7 @@ const scenarioItems = isEnglish
 
 <html lang={isEnglish ? 'en' : 'zh-CN'}>
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description} />
 	</head>
 
 	<body>
@@ -100,8 +98,6 @@ const scenarioItems = isEnglish
 						)
 					}
 				</header>
-
-				{heroImage && <Image class="hero-image" width={1120} height={560} src={heroImage} alt="" />}
 
 				<section class="scenario-panel panel" aria-labelledby="scenario-title">
 					<div class="scenario-head">
@@ -272,13 +268,6 @@ const scenarioItems = isEnglish
 	.article-header p {
 		max-width: 760px;
 		font-size: 1.05rem;
-	}
-
-	.hero-image {
-		width: min(780px, 100%);
-		max-height: 520px;
-		object-fit: cover;
-		box-shadow: var(--shadow);
 	}
 
 	.scenario-panel {

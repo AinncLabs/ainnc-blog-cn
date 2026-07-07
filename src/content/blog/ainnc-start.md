@@ -5,7 +5,6 @@ pubDate: 2026-07-06
 category: "产品更新"
 tags: ["Ainnc", "产品介绍", "博客"]
 featured: false
-heroImage: "../../assets/blog-ainnc-start.webp"
 ---
 
 欢迎来到 Ainnc 博客。

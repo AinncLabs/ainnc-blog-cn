@@ -4,7 +4,6 @@ description: "内容运营真正低效的地方，不是创作本身，而是素
 pubDate: 2026-07-06
 category: "产品能力解读"
 tags: ["内容工作流", "素材管理", "批量发布"]
-heroImage: "../../assets/blog-one-workflow-five-tools-cover-v2.webp"
 ---
 
 社媒运营团队每天都在处理内容，但内容真正消耗团队时间的地方，往往不是创作本身，而是从素材到发布之间的交接。

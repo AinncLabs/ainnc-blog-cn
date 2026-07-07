@@ -4,7 +4,6 @@ description: "代理选型不是单纯比较价格和速度，而是要看账号
 pubDate: 2026-07-06
 category: "产品能力解读"
 tags: ["代理 IP", "静态 IP", "移动 IP"]
-heroImage: "../../assets/blog-proxy-ip-types-cover-v2.webp"
 ---
 
 代理 IP 是社媒账号运营里最容易被低估的基础设施。很多团队只关心“能不能访问”，但真正影响长期稳定的是 IP 类型、地域、复用方式和账号绑定关系。

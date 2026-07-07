@@ -4,7 +4,6 @@ description: "客户续约看的不只是内容数量，而是账号健康、任
 pubDate: 2026-07-06
 category: "运营方法论"
 tags: ["MCN", "代运营", "客户复盘"]
-heroImage: "../../assets/blog-mcn-prove-value-with-data-cover-v2.webp"
 ---
 
 代运营机构最常见的压力不是“有没有做事”，而是“客户能不能看见你做了什么”。

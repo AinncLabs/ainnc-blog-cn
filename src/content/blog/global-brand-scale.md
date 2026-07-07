@@ -4,7 +4,6 @@ description: "品牌进入新市场时，难点不是多开几个账号，而是
 pubDate: 2026-07-06
 category: "出海观察"
 tags: ["全球品牌", "出海运营", "本地化"]
-heroImage: "../../assets/blog-global-brand-scale-cover-v2.webp"
 ---
 
 全球品牌进入新市场时，社媒运营往往比想象中更复杂。很多团队以为本地化就是把总部内容翻译成当地语言，再多建几个 TikTok、Instagram、Reddit 或 X 账号。但真正开始执行后才会发现，问题不在“发不发得出去”，而在于市场、账号、素材、任务和团队协作能不能形成一套可复制流程。
