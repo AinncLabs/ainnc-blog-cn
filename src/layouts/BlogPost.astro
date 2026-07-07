@@ -32,6 +32,8 @@ const ctaDescription = isEnglish
 	: '看看 Ainnc 如何在规模化场景下处理账号隔离、代理 IP、素材管理和批量发布。';
 const officialLabel = isEnglish ? 'Visit Official Site' : '访问官网';
 const telegramLabel = isEnglish ? 'Contact on Telegram' : 'Telegram 咨询';
+const tocLabel = isEnglish ? 'In This Article' : '文章目录';
+const tocHint = isEnglish ? 'Timeline' : '时间轴';
 const categoryTone = getCategoryTone(category);
 const postCode = getPostCode(category, postIndex);
 ---
@@ -78,8 +80,18 @@ const postCode = getPostCode(category, postIndex);
 					}
 				</header>
 
-				<div class="prose panel">
-					<slot />
+				<div class="article-body-grid">
+					<aside class="article-toc" id="article-toc" aria-label={tocLabel}>
+						<div class="toc-card">
+							<div class="toc-kicker">{tocHint}</div>
+							<h2>{tocLabel}</h2>
+							<nav class="toc-list" id="article-toc-list"></nav>
+						</div>
+					</aside>
+
+					<div class="prose panel">
+						<slot />
+					</div>
 				</div>
 
 				<section class="article-cta">
@@ -103,6 +115,51 @@ const postCode = getPostCode(category, postIndex);
 		<script>
 			const progress = document.getElementById('reading-progress');
 			const backToTop = document.getElementById('back-to-top');
+			const toc = document.getElementById('article-toc');
+			const tocList = document.getElementById('article-toc-list');
+			const articleHeadings = Array.from(document.querySelectorAll<HTMLElement>('.prose h2, .prose h3'));
+
+			function slugifyHeading(text: string, index: number) {
+				const slug = text
+					.trim()
+					.toLowerCase()
+					.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+					.replace(/^-+|-+$/g, '');
+				return slug || `section-${index + 1}`;
+			}
+
+			if (toc && tocList) {
+				if (articleHeadings.length < 2) {
+					toc.hidden = true;
+				} else {
+					const usedHeadingIds = new Set<string>();
+					articleHeadings.forEach((heading, index) => {
+						if (!heading.id) {
+							heading.id = slugifyHeading(heading.textContent || '', index);
+						}
+						let uniqueId = heading.id;
+						let suffix = 2;
+						while (usedHeadingIds.has(uniqueId)) {
+							uniqueId = `${heading.id}-${suffix}`;
+							suffix += 1;
+						}
+						heading.id = uniqueId;
+						usedHeadingIds.add(uniqueId);
+
+						const link = document.createElement('a');
+						link.href = `#${heading.id}`;
+						link.className = `toc-link depth-${heading.tagName.toLowerCase()}`;
+						link.dataset.target = heading.id;
+						const dot = document.createElement('span');
+						dot.className = 'toc-dot';
+						dot.setAttribute('aria-hidden', 'true');
+						const label = document.createElement('span');
+						label.textContent = heading.textContent || '';
+						link.append(dot, label);
+						tocList.appendChild(link);
+					});
+				}
+			}
 
 			function updateReadingState() {
 				const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -138,6 +195,28 @@ const postCode = getPostCode(category, postIndex);
 				});
 			} else {
 				revealItems.forEach((item) => item.classList.add('is-visible'));
+			}
+
+			const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc-link'));
+			if (tocLinks.length > 0 && 'IntersectionObserver' in window) {
+				const setActiveTocLink = (id: string) => {
+					tocLinks.forEach((link) => link.classList.toggle('is-active', link.dataset.target === id));
+				};
+
+				const headingObserver = new IntersectionObserver(
+					(entries) => {
+						const visible = entries
+							.filter((entry) => entry.isIntersecting)
+							.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+						if (visible?.target.id) {
+							setActiveTocLink(visible.target.id);
+						}
+					},
+					{ rootMargin: '-18% 0px -68% 0px', threshold: 0.01 },
+				);
+
+				articleHeadings.forEach((heading) => headingObserver.observe(heading));
+				setActiveTocLink(articleHeadings[0]?.id || '');
 			}
 		</script>
 	</body>
@@ -226,6 +305,125 @@ const postCode = getPostCode(category, postIndex);
 	.article-header p {
 		max-width: 760px;
 		font-size: 1.05rem;
+	}
+
+	.article-body-grid {
+		display: grid;
+		grid-template-columns: minmax(170px, 220px) minmax(0, 780px);
+		gap: 1.25rem;
+		align-items: start;
+		width: min(1040px, 100%);
+	}
+
+	.article-toc {
+		position: sticky;
+		top: 6rem;
+		align-self: start;
+	}
+
+	.article-toc[hidden] {
+		display: none;
+	}
+
+	.toc-card {
+		position: relative;
+		border: 1px solid color-mix(in srgb, var(--article-accent) 18%, white);
+		border-radius: 8px;
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 82%), rgba(239, 255, 252, 74%)),
+			white;
+		padding: 1rem;
+		box-shadow: 0 18px 50px rgba(3, 47, 44, 8%);
+	}
+
+	.toc-kicker {
+		display: inline-flex;
+		width: fit-content;
+		border: 1px solid color-mix(in srgb, var(--article-accent) 24%, white);
+		border-radius: 999px;
+		background: var(--article-accent-soft);
+		padding: 0.2rem 0.55rem;
+		color: var(--article-accent);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.68rem;
+		font-weight: 900;
+		text-transform: uppercase;
+	}
+
+	.toc-card h2 {
+		margin: 0.55rem 0 0.8rem;
+		font-size: 1rem;
+	}
+
+	.toc-list {
+		position: relative;
+		display: grid;
+		gap: 0.15rem;
+	}
+
+	.toc-list::before {
+		content: '';
+		position: absolute;
+		top: 0.45rem;
+		bottom: 0.45rem;
+		left: 0.34rem;
+		width: 1px;
+		background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--article-accent) 42%, white), transparent);
+	}
+
+	.toc-list :global(.toc-link) {
+		position: relative;
+		display: grid;
+		grid-template-columns: 0.72rem 1fr;
+		gap: 0.5rem;
+		align-items: start;
+		border-radius: 8px;
+		padding: 0.42rem 0.35rem;
+		color: var(--muted);
+		font-size: 0.82rem;
+		font-weight: 800;
+		line-height: 1.45;
+		text-decoration: none;
+		transition:
+			background 0.2s ease,
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.toc-list :global(.toc-link.depth-h3) {
+		padding-left: 0.82rem;
+		font-size: 0.76rem;
+		font-weight: 700;
+	}
+
+	.toc-list :global(.toc-dot) {
+		position: relative;
+		z-index: 1;
+		width: 0.46rem;
+		height: 0.46rem;
+		margin-top: 0.42em;
+		border: 1px solid color-mix(in srgb, var(--article-accent) 48%, white);
+		border-radius: 2px;
+		background: #f5fffd;
+		transform: rotate(45deg);
+		transition:
+			background 0.2s ease,
+			box-shadow 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.toc-list :global(.toc-link:hover),
+	.toc-list :global(.toc-link.is-active) {
+		background: color-mix(in srgb, var(--article-accent-soft) 70%, white);
+		color: #042f2d;
+		transform: translateX(2px);
+	}
+
+	.toc-list :global(.toc-link:hover .toc-dot),
+	.toc-list :global(.toc-link.is-active .toc-dot) {
+		border-color: var(--article-accent);
+		background: var(--article-accent);
+		box-shadow: 0 0 0 5px color-mix(in srgb, var(--article-accent) 12%, transparent);
 	}
 
 	.prose {
@@ -349,6 +547,24 @@ const postCode = getPostCode(category, postIndex);
 	}
 
 	@media (max-width: 720px) {
+		.article-body-grid {
+			display: block;
+			width: 100%;
+		}
+
+		.article-toc {
+			position: static;
+			margin-bottom: 1rem;
+		}
+
+		.toc-card {
+			padding: 0.85rem;
+		}
+
+		.toc-list {
+			grid-template-columns: 1fr;
+		}
+
 		.article-header,
 		.prose,
 		.article-cta {
