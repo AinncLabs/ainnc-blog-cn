@@ -94,18 +94,20 @@ const postCode = getPostCode(category, postIndex);
 					</div>
 				</div>
 
-				<section class="article-cta">
-					<h2>{ctaTitle}</h2>
-					<p>{ctaDescription}</p>
-					<div class="cta-actions">
-						<a href="https://www.ainnc.com/#hero" target="_blank" rel="noopener noreferrer">
-							{officialLabel}
-						</a>
-						<a class="secondary-cta" href="https://t.me/qccbot2026" target="_blank" rel="noopener noreferrer">
-							{telegramLabel}
-						</a>
-					</div>
-				</section>
+				<div class="article-cta-row">
+					<section class="article-cta">
+						<h2>{ctaTitle}</h2>
+						<p>{ctaDescription}</p>
+						<div class="cta-actions">
+							<a href="https://www.ainnc.com/#hero" target="_blank" rel="noopener noreferrer">
+								{officialLabel}
+							</a>
+							<a class="secondary-cta" href="https://t.me/qccbot2026" target="_blank" rel="noopener noreferrer">
+								{telegramLabel}
+							</a>
+						</div>
+					</section>
+				</div>
 			</article>
 		</main>
 		<button class="back-to-top" type="button" id="back-to-top" aria-label={isEnglish ? 'Back to top' : '返回顶部'}>
@@ -469,11 +471,21 @@ const postCode = getPostCode(category, postIndex);
 		display: grid;
 		gap: 1rem;
 		width: min(780px, 100%);
-		margin: 0 auto;
 		border-radius: 8px;
 		background: linear-gradient(135deg, #04302e, #06544f);
 		padding: 2rem;
 		color: white;
+	}
+
+	.article-cta-row {
+		display: grid;
+		grid-template-columns: minmax(170px, 220px) minmax(0, 780px);
+		gap: 1.25rem;
+		width: min(1040px, 100%);
+	}
+
+	.article-cta-row .article-cta {
+		grid-column: 2;
 	}
 
 	.article-cta h2,
@@ -548,6 +560,11 @@ const postCode = getPostCode(category, postIndex);
 
 	@media (max-width: 720px) {
 		.article-body-grid {
+			display: block;
+			width: 100%;
+		}
+
+		.article-cta-row {
 			display: block;
 			width: 100%;
 		}
