@@ -15,6 +15,12 @@ const audiences = [
 	['Global Brand Teams', 'When teams lack local staff, local content, or devices, Ainnc gives them a structured workflow for accounts, content, publishing, and review.'],
 	['Why Infrastructure', 'Accounts, proxies, assets, and tasks share one record system instead of living across sheets, drives, and chat threads. Scale should not make the workflow messy.'],
 ];
+const proofStats = [
+	['3+', 'years of social ops'],
+	['10000+', 'managed account environments'],
+	['6', 'major social platforms'],
+	['7x24', 'cloud automation runtime'],
+];
 const matrixLabels = new Map([
 	[7, 'TT'],
 	[24, 'IG'],
@@ -57,6 +63,22 @@ const matrixLabels = new Map([
 						Ainnc is not just a posting tool. It is an operating layer where accounts,
 						proxies, assets, and tasks share the same system for teams managing social accounts at scale.
 					</p>
+				</div>
+				<div class="proof-panel" aria-label="Ainnc operating scale">
+					<div class="proof-head">
+						<span>Ainnc · Operating Scale</span>
+						<em>TRACK RECORD</em>
+					</div>
+					<div class="proof-grid">
+						{
+							proofStats.map(([value, label]) => (
+								<div class="proof-cell">
+									<strong>{value}</strong>
+									<span>{label}</span>
+								</div>
+							))
+						}
+					</div>
 				</div>
 			</section>
 
@@ -128,8 +150,9 @@ const matrixLabels = new Map([
 		position: relative;
 		isolation: isolate;
 		display: grid;
-		min-height: 500px;
-		place-items: center;
+		min-height: 640px;
+		align-content: center;
+		justify-items: center;
 		overflow: hidden;
 		margin-bottom: 2rem;
 		border: 1px solid var(--line);
@@ -209,7 +232,7 @@ const matrixLabels = new Map([
 		display: grid;
 		max-width: 760px;
 		gap: 1rem;
-		padding: clamp(2rem, 7vw, 5rem) 1rem;
+		padding: clamp(2rem, 5vw, 4rem) 1rem 1.1rem;
 		justify-items: center;
 	}
 
@@ -232,6 +255,84 @@ const matrixLabels = new Map([
 	.hero-copy p {
 		max-width: 640px;
 		font-size: 1.08rem;
+	}
+
+	.proof-panel {
+		position: relative;
+		z-index: 3;
+		width: min(760px, calc(100% - 2rem));
+		overflow: hidden;
+		border: 1px solid rgba(46, 233, 208, 20%);
+		border-radius: 8px;
+		background:
+			linear-gradient(180deg, rgba(4, 36, 38, 92%), rgba(5, 54, 52, 88%)),
+			#06272a;
+		padding: 1rem;
+		box-shadow: 0 24px 60px rgba(0, 69, 76, 22%);
+		text-align: left;
+		backdrop-filter: blur(18px);
+	}
+
+	.proof-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.85rem;
+		color: #dcfffa;
+	}
+
+	.proof-head span,
+	.proof-head em,
+	.proof-cell strong {
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	}
+
+	.proof-head span {
+		font-size: 0.78rem;
+		font-weight: 900;
+	}
+
+	.proof-head em {
+		border: 1px solid rgba(46, 233, 208, 22%);
+		border-radius: 999px;
+		background: rgba(46, 233, 208, 10%);
+		padding: 0.25rem 0.55rem;
+		color: #8dfff0;
+		font-size: 0.66rem;
+		font-style: normal;
+		font-weight: 900;
+	}
+
+	.proof-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.65rem;
+	}
+
+	.proof-cell {
+		border: 1px solid rgba(255, 255, 255, 8%);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 6%);
+		padding: 0.9rem;
+	}
+
+	.proof-cell strong,
+	.proof-cell span {
+		display: block;
+	}
+
+	.proof-cell strong {
+		color: #e8fffb;
+		font-size: clamp(1.35rem, 2.2vw, 2rem);
+		line-height: 1;
+	}
+
+	.proof-cell span {
+		margin-top: 0.55rem;
+		color: rgba(232, 255, 251, 70%);
+		font-size: 0.78rem;
+		font-weight: 800;
 	}
 
 	.audience-grid,
@@ -386,7 +487,8 @@ const matrixLabels = new Map([
 	@media (max-width: 900px) {
 		.audience-grid,
 		.capability-grid,
-		.stats-row {
+		.stats-row,
+		.proof-grid {
 			grid-template-columns: 1fr;
 		}
 

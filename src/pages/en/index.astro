@@ -19,6 +19,19 @@ const frameworks = [
 	['insights', 'Global Growth', 'Localization, multi-market scale, and brand expansion'],
 ];
 const topics = ['Operations Playbooks', 'Platform Guides', 'Product Capabilities', 'Global Growth', 'Task Reviews', 'Tutorials'];
+const clusterDevices = [
+	{ id: 'TT-01', platform: 'TikTok', active: true },
+	{ id: 'IG-02', platform: 'Instagram', active: false },
+	{ id: 'RD-03', platform: 'Reddit', active: true },
+	{ id: 'X-04', platform: 'X', active: false },
+	{ id: 'IP-05', platform: 'Proxy IP', active: true },
+	{ id: 'AI-06', platform: 'Content AI', active: false },
+];
+const clusterLogs = [
+	['09:41', 'TikTok', 'bulk login', 'done'],
+	['09:46', 'Instagram', 'asset sync', 'running'],
+	['09:53', 'Reddit', 'post queue', 'done'],
+];
 const matrixLabels = new Map([
 	[8, 'TT'],
 	[25, 'IG'],
@@ -75,6 +88,48 @@ const matrixLabels = new Map([
 						<span><strong>{posts.length}</strong>articles</span>
 						<span><strong>4</strong>themes</span>
 						<span><strong>1</strong>operations layer</span>
+					</div>
+				</div>
+				<div class="cluster-wrap" aria-label="Ainnc cloud account cluster preview">
+					<div class="cluster-panel">
+						<div class="cluster-head">
+							<span class="cluster-title">Cloud account cluster · Live tasks</span>
+							<span class="live-pill"><span class="live-dot"></span>RUNNING</span>
+						</div>
+						<div class="device-grid">
+							{
+								clusterDevices.map((device, index) => (
+									<div
+										class:list={['device-card', { active: device.active }]}
+										style={`--delay: ${index * 0.16}s`}
+									>
+										<div class="device-top">
+											<span class="device-id">{device.id}</span>
+											<span class="device-dot"></span>
+										</div>
+										<p class="device-status">{device.platform} environment sync</p>
+										<div class="device-bar"><span></span></div>
+									</div>
+								))
+							}
+						</div>
+						<div class="log-panel">
+							{
+								clusterLogs.map(([time, platform, action, status], index) => (
+									<div class="log-line" style={`--delay: ${index * 0.18}s`}>
+										<span class="lt">{time}</span>
+										<span class="ld">{platform}</span>
+										<span class="la">{action}</span>
+										<span class="lc">{status}</span>
+									</div>
+								))
+							}
+						</div>
+						<div class="cluster-stats">
+							<span><strong>309</strong>task samples</span>
+							<span><strong>29</strong>device environments</span>
+							<span><strong>4</strong>platform paths</span>
+						</div>
 					</div>
 				</div>
 				<div class="hero-ticker" aria-hidden="true">
@@ -192,8 +247,9 @@ const matrixLabels = new Map([
 		position: relative;
 		isolation: isolate;
 		display: grid;
-		min-height: 640px;
-		place-items: center;
+		min-height: 760px;
+		align-content: center;
+		justify-items: center;
 		overflow: hidden;
 		margin-bottom: 4rem;
 		border: 1px solid var(--line);
@@ -288,7 +344,7 @@ const matrixLabels = new Map([
 		display: grid;
 		max-width: 760px;
 		gap: 1rem;
-		padding: clamp(2rem, 7vw, 5rem) 1rem;
+		padding: clamp(2rem, 5vw, 4rem) 1rem 1.25rem;
 		justify-items: center;
 	}
 
@@ -382,6 +438,175 @@ const matrixLabels = new Map([
 		margin-right: 0.2rem;
 		color: var(--text);
 		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	}
+
+	.cluster-wrap {
+		position: relative;
+		z-index: 4;
+		width: min(640px, calc(100% - 2rem));
+		margin-bottom: 3.25rem;
+		transform: translate3d(calc(var(--shift-x) * 0.25), calc(var(--shift-y) * 0.25), 0);
+		transition: transform 0.18s ease-out;
+	}
+
+	.cluster-panel {
+		overflow: hidden;
+		border: 1px solid rgba(46, 233, 208, 20%);
+		border-radius: 8px;
+		background:
+			linear-gradient(180deg, rgba(4, 36, 38, 92%), rgba(5, 54, 52, 88%)),
+			#06272a;
+		padding: 1rem;
+		box-shadow: 0 24px 60px rgba(0, 69, 76, 22%);
+		text-align: left;
+		backdrop-filter: blur(18px);
+	}
+
+	.cluster-head,
+	.device-top,
+	.cluster-stats,
+	.log-line {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.cluster-head {
+		margin-bottom: 0.85rem;
+		color: #dcfffa;
+	}
+
+	.cluster-title,
+	.live-pill,
+	.device-id,
+	.lt,
+	.lc {
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	}
+
+	.cluster-title {
+		font-size: 0.78rem;
+		font-weight: 900;
+		letter-spacing: 0.02em;
+	}
+
+	.live-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		border: 1px solid rgba(46, 233, 208, 22%);
+		border-radius: 999px;
+		background: rgba(46, 233, 208, 10%);
+		padding: 0.25rem 0.55rem;
+		color: #8dfff0;
+		font-size: 0.66rem;
+		font-weight: 900;
+	}
+
+	.live-dot,
+	.device-dot {
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 999px;
+		background: var(--accent);
+		box-shadow: 0 0 0 5px rgba(0, 201, 170, 12%);
+	}
+
+	.live-dot {
+		animation: live-pulse 1.35s ease-in-out infinite;
+	}
+
+	.device-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.65rem;
+	}
+
+	.device-card {
+		border: 1px solid rgba(255, 255, 255, 8%);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 6%);
+		padding: 0.75rem;
+		animation: card-breathe 4.8s ease-in-out var(--delay) infinite;
+	}
+
+	.device-card.active {
+		border-color: rgba(46, 233, 208, 42%);
+		background: rgba(46, 233, 208, 12%);
+	}
+
+	.device-id {
+		color: #e8fffb;
+		font-size: 0.72rem;
+		font-weight: 900;
+	}
+
+	.device-status {
+		margin-top: 0.5rem;
+		color: rgba(232, 255, 251, 70%);
+		font-size: 0.74rem;
+		font-weight: 800;
+	}
+
+	.device-bar {
+		overflow: hidden;
+		height: 0.28rem;
+		margin-top: 0.65rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 10%);
+	}
+
+	.device-bar span {
+		display: block;
+		width: 55%;
+		height: 100%;
+		border-radius: inherit;
+		background: linear-gradient(90deg, var(--accent), #8dfff0);
+		animation: bar-fill 3.8s ease-in-out var(--delay) infinite;
+	}
+
+	.log-panel {
+		display: grid;
+		gap: 0.4rem;
+		margin-top: 0.8rem;
+	}
+
+	.log-line {
+		border: 1px solid rgba(255, 255, 255, 7%);
+		border-radius: 6px;
+		background: rgba(255, 255, 255, 5%);
+		padding: 0.45rem 0.55rem;
+		color: rgba(232, 255, 251, 78%);
+		font-size: 0.72rem;
+		animation: log-glow 4s ease-in-out var(--delay) infinite;
+	}
+
+	.ld,
+	.la {
+		font-weight: 800;
+	}
+
+	.lt,
+	.lc {
+		color: #8dfff0;
+		font-weight: 900;
+	}
+
+	.cluster-stats {
+		margin-top: 0.85rem;
+		border-top: 1px solid rgba(255, 255, 255, 8%);
+		padding-top: 0.8rem;
+		color: rgba(232, 255, 251, 70%);
+		font-size: 0.74rem;
+		font-weight: 800;
+	}
+
+	.cluster-stats strong {
+		margin-right: 0.25rem;
+		color: white;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 1rem;
 	}
 
 	.hero-ticker {
@@ -653,6 +878,32 @@ const matrixLabels = new Map([
 		}
 	}
 
+	@keyframes live-pulse {
+		50% {
+			box-shadow: 0 0 0 8px rgba(0, 201, 170, 4%);
+			transform: scale(0.9);
+		}
+	}
+
+	@keyframes card-breathe {
+		50% {
+			transform: translateY(-2px);
+		}
+	}
+
+	@keyframes bar-fill {
+		50% {
+			width: 88%;
+		}
+	}
+
+	@keyframes log-glow {
+		50% {
+			border-color: rgba(46, 233, 208, 20%);
+			background: rgba(46, 233, 208, 8%);
+		}
+	}
+
 	@media (max-width: 1180px) {
 		.hero-rail {
 			display: none;
@@ -684,6 +935,15 @@ const matrixLabels = new Map([
 			padding: 1rem;
 		}
 
+		.cluster-wrap {
+			width: min(100%, 32rem);
+			margin-bottom: 1.5rem;
+		}
+
+		.device-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
 		.matrix-wrap,
 		.hero-watermark,
 		.hero-rail,
@@ -698,6 +958,21 @@ const matrixLabels = new Map([
 
 	@media (hover: none), (pointer: coarse) {
 		.hero-cursor-glow {
+			display: none;
+		}
+	}
+
+	@media (max-width: 520px) {
+		.cluster-panel {
+			padding: 0.75rem;
+		}
+
+		.device-card {
+			padding: 0.65rem;
+		}
+
+		.log-panel,
+		.cluster-stats {
 			display: none;
 		}
 	}
