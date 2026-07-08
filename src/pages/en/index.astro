@@ -331,7 +331,7 @@ const clusterLogs = [
 				if (logTrack) {
 					const template = logTrack.querySelector<HTMLElement>('.log-line');
 					const row = template ? (template.cloneNode(true) as HTMLElement) : document.createElement('div');
-					row.className = 'log-line is-new';
+					row.className = 'log-line';
 					if (template) {
 						const cells = row.querySelectorAll('span');
 						const values = [formatTime(), device, action, platform, `✓ ${status}`];
@@ -344,10 +344,18 @@ const clusterLogs = [
 					logTrack.appendChild(row);
 					if (logTrack.children.length > 4) {
 						const first = logTrack.firstElementChild as HTMLElement | null;
-						first?.classList.add('is-removing');
-						window.setTimeout(() => first?.remove(), 420);
+						if (first) {
+							const gap = parseFloat(window.getComputedStyle(logTrack).rowGap || '0');
+							const shift = first.getBoundingClientRect().height + gap;
+							logTrack.style.setProperty('--log-shift', `${shift}px`);
+							logTrack.classList.add('is-shifting');
+							window.setTimeout(() => {
+								first.remove();
+								logTrack.classList.remove('is-shifting');
+								logTrack.style.removeProperty('--log-shift');
+							}, 680);
+						}
 					}
-					window.setTimeout(() => row.classList.remove('is-new'), 700);
 				}
 
 				if (liveCount) {
@@ -721,13 +729,20 @@ const clusterLogs = [
 		border-radius: 8px;
 		background: rgba(0, 21, 22, 22%);
 		padding: 0.55rem;
-		min-height: 100%;
-		max-height: 13rem;
+		height: 12.85rem;
+		min-height: 12.85rem;
+		max-height: 12.85rem;
 	}
 
 	.log-track {
 		display: grid;
 		gap: 0.45rem;
+		will-change: transform;
+	}
+
+	.log-track.is-shifting {
+		transform: translate3d(0, calc(-1 * var(--log-shift, 0px)), 0);
+		transition: transform 0.68s linear;
 	}
 
 	.log-line {
@@ -737,23 +752,16 @@ const clusterLogs = [
 		padding: 0.45rem 0.55rem;
 		color: rgba(232, 255, 251, 78%);
 		font-size: 0.72rem;
+		min-height: 2.45rem;
 		transition:
 			border-color 0.35s ease,
-			background 0.35s ease,
-			opacity 0.45s ease,
-			transform 0.45s ease;
+			background 0.35s ease;
 	}
 
-	.log-line.is-new {
+	.log-line:last-child {
 		border-color: rgba(141, 255, 240, 42%);
 		background: rgba(46, 233, 208, 11%);
 		box-shadow: inset 0 0 0 1px rgba(46, 233, 208, 10%);
-		animation: log-enter 0.58s ease both;
-	}
-
-	.log-line.is-removing {
-		opacity: 0;
-		transform: translateY(-0.5rem);
 	}
 
 	.ld,
@@ -1072,18 +1080,6 @@ const clusterLogs = [
 		50% {
 			box-shadow: 0 0 0 8px rgba(0, 201, 170, 4%);
 			transform: scale(0.9);
-		}
-	}
-
-	@keyframes log-enter {
-		from {
-			opacity: 0;
-			transform: translateY(0.65rem);
-		}
-
-		to {
-			opacity: 1;
-			transform: translateY(0);
 		}
 	}
 
