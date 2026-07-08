@@ -105,7 +105,7 @@ const clusterLogs = [
 					</div>
 				</div>
 				<div class="hero-ticker" aria-hidden="true">
-					<div>
+					<div class="ticker-track">
 						<span class="ticker-icon" data-platform="tiktok">
 							<svg viewBox="0 0 24 24" focusable="false">
 								<path d="M14.5 4v10.1a4.3 4.3 0 1 1-3.2-4.2v3.1a1.5 1.5 0 1 0 1 1.4V4h2.2c.3 2.1 1.7 3.8 3.8 4.3v3.1a7 7 0 0 1-3.8-1.3z" />
@@ -250,6 +250,15 @@ const clusterLogs = [
 					hero.style.setProperty('--shift-y', '0px');
 				});
 			}
+
+			document.querySelectorAll<HTMLElement>('.ticker-track').forEach((track) => {
+				requestAnimationFrame(() => {
+					const loopDistance = track.scrollWidth / 2;
+					track.style.setProperty('--ticker-distance', `${loopDistance}px`);
+					const items = Array.from(track.children);
+					items.forEach((item) => track.appendChild(item.cloneNode(true)));
+				});
+			});
 		</script>
 	</body>
 </html>
@@ -625,11 +634,12 @@ const clusterLogs = [
 		white-space: nowrap;
 	}
 
-	.hero-ticker div {
+	.hero-ticker .ticker-track {
 		display: flex;
 		width: max-content;
 		gap: 1.6rem;
-		animation: ticker-flow 22s linear infinite;
+		will-change: transform;
+		animation: ticker-flow 24s linear infinite;
 	}
 
 	.framework-section,
@@ -874,7 +884,7 @@ const clusterLogs = [
 
 	@keyframes ticker-flow {
 		to {
-			transform: translateX(-50%);
+			transform: translate3d(calc(-1 * var(--ticker-distance, 50%)), 0, 0);
 		}
 	}
 
