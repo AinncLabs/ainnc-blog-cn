@@ -16,6 +16,7 @@ type Props = CollectionEntry<'blog'>['data'] & {
 const {
 	title,
 	description,
+	author,
 	pubDate,
 	updatedDate,
 	category = 'Ainnc',
@@ -28,6 +29,8 @@ const {
 } = Astro.props;
 const isEnglish = locale === 'en';
 const tagLabel = isEnglish ? 'Post tags' : '文章标签';
+const authorName = author ?? (isEnglish ? 'Ainnc Team' : 'Ainnc 麦芽营销团队');
+const authorLabel = isEnglish ? 'By' : '作者';
 const blogPath = isEnglish ? '/en/blog/' : '/blog/';
 const backLabel = isEnglish ? 'Back to Blog' : '返回博客列表';
 const ctaTitle = isEnglish ? 'Run Your Social Account Matrix From One Platform' : '用一个平台运营你的整个社媒矩阵';
@@ -77,6 +80,18 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 					</div>
 					<h1>{title}</h1>
 					<p>{description}</p>
+					<div class="article-byline">
+						<span>{authorLabel} {authorName}</span>
+						{
+							tags.length > 0 && (
+								<ul class="content-tags article-header-tags" aria-label={tagLabel}>
+									{tags.slice(0, 6).map((tag) => (
+										<li>#{tag}</li>
+									))}
+								</ul>
+							)
+						}
+					</div>
 				</header>
 
 				<div class="article-body-grid">
@@ -115,18 +130,6 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 						}
 					</div>
 				</div>
-
-				{
-					tags.length > 0 && (
-						<div class="article-tags-row">
-							<ul class="content-tags article-bottom-tags" aria-label={tagLabel}>
-								{tags.slice(0, 6).map((tag) => (
-									<li>#{tag}</li>
-								))}
-							</ul>
-						</div>
-					)
-				}
 
 				<div class="article-cta-row">
 					<section class="article-cta">
@@ -347,6 +350,21 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 		max-width: 820px;
 	}
 
+	.article-byline {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1rem;
+		align-items: center;
+		margin-top: 0.15rem;
+		color: #64748b;
+		font-size: 0.92rem;
+		font-weight: 800;
+	}
+
+	.article-header-tags {
+		align-items: center;
+	}
+
 	.updated-date {
 		color: #80939a;
 		font-weight: 700;
@@ -519,6 +537,42 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 		transform: translateY(0);
 	}
 
+	.prose :global(strong) {
+		color: #073d3a;
+		font-weight: 900;
+	}
+
+	.prose :global(a) {
+		color: var(--article-accent);
+		font-weight: 850;
+		text-underline-offset: 0.18em;
+	}
+
+	.prose :global(code) {
+		border: 1px solid #dfe5ea;
+		border-radius: 6px;
+		background: #f3f5f7;
+		padding: 0.08rem 0.34rem;
+		color: #17212b;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.86em;
+	}
+
+	.prose :global(blockquote) {
+		margin: 1.6rem 0;
+		border-left: 4px solid var(--article-accent);
+		border-radius: 8px;
+		background: #f8fafc;
+		padding: 1rem 1.15rem;
+		color: #334155;
+		box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 8%);
+	}
+
+	.prose :global(blockquote p) {
+		margin: 0;
+		color: #334155;
+	}
+
 	.prose :global(h2),
 	.prose :global(h3) {
 		position: relative;
@@ -568,6 +622,146 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 		border-bottom: 0;
 	}
 
+	.prose :global(.article-figure) {
+		margin: 2rem 0;
+		border: 1px solid color-mix(in srgb, var(--article-accent) 18%, white);
+		border-radius: 8px;
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, 96%), rgba(238, 255, 252, 88%)),
+			white;
+		padding: 1.2rem;
+		box-shadow: 0 22px 55px rgba(4, 47, 45, 8%);
+	}
+
+	.prose :global(.article-figure figcaption) {
+		margin-bottom: 0.9rem;
+		color: #073d3a;
+		font-size: 1rem;
+		font-weight: 950;
+	}
+
+	.prose :global(.editorial-note) {
+		display: inline-flex;
+		width: fit-content;
+		margin-bottom: 0.75rem;
+		border: 1px solid color-mix(in srgb, var(--article-accent) 20%, white);
+		border-radius: 999px;
+		background: var(--article-accent-soft);
+		padding: 0.22rem 0.62rem;
+		color: var(--article-accent);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.72rem;
+		font-weight: 900;
+		letter-spacing: 0.04em;
+	}
+
+	.prose :global(.attention-equation) {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr auto 1.25fr;
+		gap: 0.7rem;
+		align-items: stretch;
+	}
+
+	.prose :global(.attention-equation span) {
+		display: grid;
+		min-height: 5.2rem;
+		align-content: center;
+		border: 1px solid #d6ebe8;
+		border-radius: 8px;
+		background: white;
+		padding: 0.9rem;
+		color: #2f5b60;
+		font-size: 0.92rem;
+		font-weight: 850;
+		line-height: 1.45;
+	}
+
+	.prose :global(.attention-equation span strong) {
+		display: block;
+		margin-bottom: 0.28rem;
+		color: #073d3a;
+		font-size: 1.15rem;
+	}
+
+	.prose :global(.attention-equation em) {
+		display: grid;
+		place-items: center;
+		color: var(--article-accent);
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 1.6rem;
+		font-style: normal;
+		font-weight: 950;
+	}
+
+	.prose :global(.signal-grid) {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.75rem;
+	}
+
+	.prose :global(.signal-card) {
+		border: 1px solid #d6ebe8;
+		border-radius: 8px;
+		background: white;
+		padding: 0.9rem;
+	}
+
+	.prose :global(.signal-card b) {
+		display: block;
+		margin-bottom: 0.36rem;
+		color: #073d3a;
+		font-size: 0.95rem;
+	}
+
+	.prose :global(.signal-card span) {
+		color: #49666a;
+		font-size: 0.86rem;
+		line-height: 1.55;
+	}
+
+	.prose :global(.workflow-steps) {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.75rem;
+		counter-reset: step;
+	}
+
+	.prose :global(.workflow-steps div) {
+		position: relative;
+		border: 1px solid #d6ebe8;
+		border-radius: 8px;
+		background: white;
+		padding: 1rem 0.85rem 0.9rem;
+	}
+
+	.prose :global(.workflow-steps div::before) {
+		counter-increment: step;
+		content: counter(step);
+		display: grid;
+		width: 1.7rem;
+		height: 1.7rem;
+		margin-bottom: 0.65rem;
+		place-items: center;
+		border-radius: 999px;
+		background: var(--article-accent);
+		color: white;
+		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+		font-weight: 900;
+	}
+
+	.prose :global(.workflow-steps b) {
+		display: block;
+		margin-bottom: 0.35rem;
+		color: #073d3a;
+	}
+
+	.prose :global(.workflow-steps span) {
+		color: #49666a;
+		font-size: 0.86rem;
+		line-height: 1.55;
+	}
+
 	.faq-section {
 		margin-top: 2.4rem;
 		border-top: 1px solid var(--line);
@@ -598,18 +792,6 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 	.faq-section p {
 		margin: 0.7rem 0 0;
 		color: #475569;
-	}
-
-	.article-tags-row {
-		display: grid;
-		grid-template-columns: minmax(170px, 220px) minmax(0, 780px);
-		gap: 1.25rem;
-		width: min(1040px, 100%);
-	}
-
-	.article-bottom-tags {
-		grid-column: 2;
-		padding-top: 0.15rem;
 	}
 
 	.article-cta {
@@ -714,11 +896,6 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 			width: 100%;
 		}
 
-		.article-tags-row {
-			display: block;
-			width: 100%;
-		}
-
 		.article-toc {
 			position: static;
 			margin-bottom: 1rem;
@@ -738,8 +915,14 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 			padding: 1rem;
 		}
 
-		.article-bottom-tags {
-			padding: 0 0.35rem;
+		.prose :global(.attention-equation),
+		.prose :global(.signal-grid),
+		.prose :global(.workflow-steps) {
+			grid-template-columns: 1fr;
+		}
+
+		.prose :global(.attention-equation em) {
+			min-height: 1rem;
 		}
 	}
 
