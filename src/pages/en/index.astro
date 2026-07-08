@@ -275,6 +275,24 @@ const clusterLogs = [
 			let publishedCount = 2866;
 			const activeDevices = new Set(['UK-003', 'US-004', 'JP-005']);
 			const taskLabels = new Map(liveTasks.map(([device, action, platform]) => [device, `${action} → ${platform}`]));
+			const progressTimers = new Map<HTMLElement, number>();
+
+			const startCardProgress = (card: HTMLElement) => {
+				const currentTimer = progressTimers.get(card);
+				if (currentTimer) {
+					window.clearTimeout(currentTimer);
+				}
+				card.classList.remove('is-complete');
+				card.classList.add('is-running');
+				const timer = window.setTimeout(() => {
+					card.classList.remove('is-running');
+					if (card.classList.contains('active')) {
+						card.classList.add('is-complete');
+					}
+					progressTimers.delete(card);
+				}, 1700);
+				progressTimers.set(card, timer);
+			};
 
 			const formatTime = () => new Date().toLocaleTimeString('en-US', { hour12: false });
 			const updateLiveTasks = () => {
@@ -292,8 +310,19 @@ const clusterLogs = [
 					const id = card.dataset.deviceId ?? '';
 					const statusNode = card.querySelector<HTMLElement>('.device-status');
 					const isActive = activeDevices.has(id);
+					const wasActive = card.classList.contains('active');
 					card.classList.toggle('active', isActive);
-					card.style.setProperty('--trace-width', `${18 + ((liveTaskIndex + Number(card.dataset.index ?? 0)) % 3) * 12}%`);
+					if (isActive && !wasActive) {
+						startCardProgress(card);
+					}
+					if (!isActive) {
+						const currentTimer = progressTimers.get(card);
+						if (currentTimer) {
+							window.clearTimeout(currentTimer);
+							progressTimers.delete(card);
+						}
+						card.classList.remove('is-running', 'is-complete');
+					}
 					if (statusNode) {
 						statusNode.textContent = isActive ? taskLabels.get(id) ?? 'processing task' : 'standby';
 					}
@@ -327,6 +356,11 @@ const clusterLogs = [
 				}
 			};
 
+			taskCards.forEach((card) => {
+				if (card.classList.contains('active')) {
+					startCardProgress(card);
+				}
+			});
 			window.setInterval(updateLiveTasks, 1850);
 
 			document.querySelectorAll<HTMLElement>('.ticker-track').forEach((track) => {
@@ -656,20 +690,29 @@ const clusterLogs = [
 	.device-trace::before {
 		content: '';
 		display: block;
-		width: 0%;
+		width: 100%;
 		height: 100%;
 		border-radius: inherit;
 		background: linear-gradient(90deg, #00c9aa, #8dfff0);
 		opacity: 0;
 		transform-origin: left center;
-		transition:
-			width 0.5s ease,
-			opacity 0.35s ease;
+		transform: scaleX(0);
+		box-shadow: 0 0 0 rgba(141, 255, 240, 0%);
+		transition: opacity 0.28s ease;
 	}
 
 	.device-card.active .device-trace::before {
-		width: var(--trace-width, 38%);
 		opacity: 1;
+	}
+
+	.device-card.is-running .device-trace::before {
+		animation: trace-fill 1.7s cubic-bezier(0.2, 0.72, 0.16, 1) forwards;
+	}
+
+	.device-card.is-complete .device-trace::before {
+		transform: scaleX(1);
+		opacity: 1;
+		box-shadow: 0 0 16px rgba(141, 255, 240, 42%);
 	}
 
 	.log-panel {
@@ -1041,6 +1084,22 @@ const clusterLogs = [
 		to {
 			opacity: 1;
 			transform: translateY(0);
+		}
+	}
+
+	@keyframes trace-fill {
+		from {
+			transform: scaleX(0);
+			box-shadow: 0 0 0 rgba(141, 255, 240, 0%);
+		}
+
+		72% {
+			box-shadow: 0 0 12px rgba(141, 255, 240, 30%);
+		}
+
+		to {
+			transform: scaleX(1);
+			box-shadow: 0 0 16px rgba(141, 255, 240, 42%);
 		}
 	}
 
