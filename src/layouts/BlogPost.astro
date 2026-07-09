@@ -156,7 +156,9 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 			const backToTop = document.getElementById('back-to-top');
 			const toc = document.getElementById('article-toc');
 			const tocList = document.getElementById('article-toc-list');
-			const articleHeadings = Array.from(document.querySelectorAll<HTMLElement>('.prose > h2, .prose > h3'));
+			const articleHeadings = Array.from(document.querySelectorAll<HTMLElement>('.prose h2, .prose h3')).filter(
+				(heading) => !heading.closest('.tldr-block, .faq-section')
+			);
 
 			function slugifyHeading(text: string, index: number) {
 				const slug = text
@@ -170,6 +172,7 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 			if (toc && tocList) {
 				if (articleHeadings.length < 2) {
 					toc.hidden = true;
+					toc.closest('.article-body-grid')?.classList.add('toc-hidden');
 				} else {
 					const usedHeadingIds = new Set<string>();
 					articleHeadings.forEach((heading, index) => {
@@ -215,7 +218,7 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 			updateReadingState();
 			backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-			const revealItems = document.querySelectorAll('.prose > *');
+			const revealItems = document.querySelectorAll('.prose > *, .prose section > *');
 			if ('IntersectionObserver' in window) {
 				const revealObserver = new IntersectionObserver(
 					(entries) => {
@@ -378,6 +381,15 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 		width: min(1040px, 100%);
 	}
 
+	.article-body-grid.toc-hidden {
+		grid-template-columns: minmax(0, 780px);
+		justify-content: center;
+	}
+
+	.article-body-grid.toc-hidden .prose {
+		grid-column: 1;
+	}
+
 	.article-toc {
 		position: sticky;
 		top: 6rem;
@@ -494,6 +506,11 @@ const displayUpdatedDate = updatedDate ?? pubDate;
 		margin: 0 auto;
 		padding: 2rem;
 		font-size: 1.04rem;
+	}
+
+	.prose :global(section) {
+		width: 100%;
+		max-width: none;
 	}
 
 	.tldr-block {
