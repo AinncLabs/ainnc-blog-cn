@@ -52,12 +52,12 @@ const topics = topicDefinitions
 	.sort((a, b) => b.count - a.count)
 	.map((topic, index) => ({ ...topic, size: topicSizes[index] }));
 const clusterDevices = [
-	{ id: 'DE-001', platform: 'TikTok', task: 'queue dispatch → TikTok', active: true },
+	{ id: 'DE-001', platform: 'TikTok', task: 'queue dispatch', active: true },
 	{ id: 'FR-002', platform: 'Instagram', task: 'standby', active: false },
 	{ id: 'UK-003', platform: 'Reddit', task: 'standby', active: false },
 	{ id: 'US-004', platform: 'X', task: 'standby', active: false },
-	{ id: 'JP-005', platform: 'TikTok', task: 'render video → TikTok', active: true },
-	{ id: 'BR-006', platform: 'Instagram', task: 'account check → Instagram', active: true },
+	{ id: 'JP-005', platform: 'TikTok', task: 'render video', active: true },
+	{ id: 'BR-006', platform: 'Instagram', task: 'account check', active: true },
 	{ id: 'ES-007', platform: 'Reddit', task: 'standby', active: false },
 	{ id: 'IT-008', platform: 'X', task: 'standby', active: false },
 ];
@@ -114,7 +114,12 @@ const clusterLogs = [
 												<span class="device-id">{device.id}</span>
 												<span class="device-dot"></span>
 											</div>
-											<p class="device-status">{device.task}</p>
+											<p class="device-status">
+												<span class="device-action">{device.task}</span>
+												<span class="device-route" hidden={!device.active}>
+													 → <strong class="device-platform">{device.platform}</strong>
+												</span>
+											</p>
 											<span class="device-trace"></span>
 										</div>
 									))
@@ -255,7 +260,6 @@ const clusterLogs = [
 			const liveCount = document.querySelector<HTMLElement>('[data-live-count]');
 			let publishedCount = 2866;
 			const activeDevices = new Set(['DE-001', 'JP-005', 'BR-006']);
-			const taskLabels = new Map(liveTasks.map(([device, action, platform]) => [device, `${action} → ${platform}`]));
 			const taskDetails = new Map(liveTasks.map(([device, action, platform, status]) => [device, [action, platform, status]]));
 			const deviceIds = taskCards.map((card) => card.dataset.deviceId ?? '').filter(Boolean);
 			const progressTimers = new Map<HTMLElement, number>();
@@ -289,6 +293,9 @@ const clusterLogs = [
 				taskCards.forEach((card) => {
 					const id = card.dataset.deviceId ?? '';
 					const statusNode = card.querySelector<HTMLElement>('.device-status');
+					const actionNode = statusNode?.querySelector<HTMLElement>('.device-action');
+					const routeNode = statusNode?.querySelector<HTMLElement>('.device-route');
+					const platformNode = statusNode?.querySelector<HTMLElement>('.device-platform');
 					const isActive = activeDevices.has(id);
 					const wasActive = card.classList.contains('active');
 					card.classList.toggle('active', isActive);
@@ -303,8 +310,11 @@ const clusterLogs = [
 						}
 						card.classList.remove('is-running', 'is-complete');
 					}
-					if (statusNode) {
-						statusNode.textContent = isActive ? taskLabels.get(id) ?? 'processing task' : 'standby';
+					if (actionNode) {
+						const [cardAction = 'processing task', cardPlatform = 'TikTok'] = taskDetails.get(id) ?? [];
+						actionNode.textContent = isActive ? cardAction : 'standby';
+						if (platformNode) platformNode.textContent = cardPlatform;
+						if (routeNode) routeNode.hidden = !isActive;
 					}
 				});
 
@@ -502,8 +512,8 @@ const clusterLogs = [
 	.cluster-wrap::after {
 		right: 2%;
 		bottom: -12%;
-		background: radial-gradient(circle, rgba(67, 117, 255, 72%) 0%, rgba(75, 89, 218, 38%) 42%, transparent 72%);
-		animation: glass-orb-blue 19s ease-in-out infinite alternate;
+		background: radial-gradient(circle, rgba(39, 219, 194, 58%) 0%, rgba(0, 166, 164, 28%) 42%, transparent 72%);
+		animation: glass-orb-teal 19s ease-in-out infinite alternate;
 	}
 
 	.cluster-panel {
@@ -514,7 +524,7 @@ const clusterLogs = [
 		border-radius: 8px;
 		background:
 			radial-gradient(circle at 18% 12%, rgba(63, 220, 210, 14%), transparent 34%),
-			radial-gradient(circle at 88% 86%, rgba(80, 105, 232, 16%), transparent 38%),
+			radial-gradient(circle at 88% 86%, rgba(39, 219, 194, 12%), transparent 38%),
 			linear-gradient(145deg, rgba(8, 31, 39, 62%), rgba(7, 17, 35, 46%));
 		padding: 1.1rem;
 		box-shadow:
@@ -585,7 +595,7 @@ const clusterLogs = [
 		width: 0.45rem;
 		height: 0.45rem;
 		border-radius: 999px;
-		background: rgba(141, 255, 240, 42%);
+		background: #3d565c;
 		box-shadow: none;
 		transition:
 			background 0.35s ease,
@@ -638,15 +648,12 @@ const clusterLogs = [
 	}
 
 	.device-card.active {
-		border-color: #7f77dd;
-		background:
-			radial-gradient(circle at 88% 0, rgba(188, 182, 255, 28%), transparent 44%),
-			linear-gradient(155deg, rgba(127, 119, 221, 24%), rgba(20, 28, 52, 16%));
+		border-color: rgba(39, 219, 194, 0.55);
+		background: linear-gradient(165deg, #12383a, #0f2e2c);
 		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 42%),
-			inset 0 0 24px rgba(127, 119, 221, 18%),
-			0 0 0 1px rgba(127, 119, 221, 24%),
-			0 0 28px rgba(127, 119, 221, 48%),
+			inset 0 1px 0 rgba(225, 255, 250, 32%),
+			inset 0 0 30px rgba(39, 219, 194, 0.06),
+			0 0 24px -6px rgba(39, 219, 194, 0.35),
 			0 16px 32px rgba(1, 7, 22, 32%);
 		-webkit-backdrop-filter: blur(22px) saturate(150%);
 		backdrop-filter: blur(22px) saturate(150%);
@@ -655,14 +662,14 @@ const clusterLogs = [
 
 	.device-card.active::before {
 		opacity: 1;
-		background: linear-gradient(90deg, transparent, rgba(235, 232, 255, 88%), transparent);
+		background: linear-gradient(90deg, transparent, rgba(205, 255, 248, 78%), transparent);
 	}
 
 	.device-card.active .device-dot {
-		background: #c4bfff;
+		background: #27dbc2;
 		box-shadow:
-			0 0 0 5px rgba(127, 119, 221, 20%),
-			0 0 20px rgba(151, 141, 244, 92%);
+			0 0 0 5px rgba(39, 219, 194, 18%),
+			0 0 20px rgba(39, 219, 194, 78%);
 		transform: scale(1.12);
 		animation: node-glow 1.6s ease-in-out infinite;
 	}
@@ -684,12 +691,17 @@ const clusterLogs = [
 	}
 
 	.device-card.active .device-id {
-		color: #f1efff;
-		text-shadow: 0 0 14px rgba(177, 169, 255, 45%);
+		color: #f4fffd;
+		text-shadow: 0 0 14px rgba(39, 219, 194, 18%);
 	}
 
 	.device-card.active .device-status {
-		color: rgba(226, 222, 255, 88%);
+		color: #cfede7;
+	}
+
+	.device-card.active .device-platform {
+		color: #27dbc2;
+		font-weight: 900;
 	}
 
 	.device-trace {
@@ -708,11 +720,11 @@ const clusterLogs = [
 		width: 100%;
 		height: 100%;
 		border-radius: inherit;
-		background: linear-gradient(90deg, #7f77dd, #bbb5ff);
+		background: linear-gradient(90deg, #00a6a4, #27dbc2);
 		opacity: 0;
 		transform-origin: left center;
 		transform: scaleX(0);
-		box-shadow: 0 0 0 rgba(127, 119, 221, 0%);
+		box-shadow: 0 0 0 rgba(39, 219, 194, 0%);
 		transition: opacity 0.28s ease;
 	}
 
@@ -727,7 +739,7 @@ const clusterLogs = [
 	.device-card.is-complete .device-trace::before {
 		transform: scaleX(1);
 		opacity: 1;
-		box-shadow: 0 0 18px rgba(127, 119, 221, 54%);
+		box-shadow: 0 0 18px rgba(39, 219, 194, 60%);
 	}
 
 	.log-panel {
@@ -776,11 +788,11 @@ const clusterLogs = [
 	}
 
 	.log-line:last-child {
-		border-color: rgba(127, 119, 221, 58%);
-		background: linear-gradient(180deg, rgba(127, 119, 221, 18%), rgba(127, 119, 221, 8%));
+		border-color: rgba(39, 219, 194, 0.45);
+		background: linear-gradient(90deg, rgba(39, 219, 194, 0.1), rgba(39, 219, 194, 0.03));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 20%),
-			0 0 20px rgba(127, 119, 221, 18%);
+			0 0 20px rgba(39, 219, 194, 18%);
 	}
 
 	.ld,
@@ -1170,7 +1182,7 @@ const clusterLogs = [
 		}
 	}
 
-	@keyframes glass-orb-blue {
+	@keyframes glass-orb-teal {
 		0% {
 			transform: translate3d(5%, 8%, 0) scale(1.08);
 		}
@@ -1183,25 +1195,25 @@ const clusterLogs = [
 	@keyframes trace-fill {
 		from {
 			transform: scaleX(0);
-			box-shadow: 0 0 0 rgba(127, 119, 221, 0%);
+			box-shadow: 0 0 0 rgba(39, 219, 194, 0%);
 		}
 
 		72% {
-			box-shadow: 0 0 14px rgba(127, 119, 221, 42%);
+			box-shadow: 0 0 14px rgba(39, 219, 194, 48%);
 		}
 
 		to {
 			transform: scaleX(1);
-			box-shadow: 0 0 18px rgba(127, 119, 221, 54%);
+			box-shadow: 0 0 18px rgba(39, 219, 194, 60%);
 		}
 	}
 
 	@keyframes node-glow {
 		50% {
-			background: #e2dfff;
+			background: #27dbc2;
 			box-shadow:
-				0 0 0 7px rgba(127, 119, 221, 22%),
-				0 0 28px rgba(151, 141, 244, 96%);
+				0 0 0 7px rgba(39, 219, 194, 20%),
+				0 0 28px rgba(39, 219, 194, 88%);
 		}
 	}
 
