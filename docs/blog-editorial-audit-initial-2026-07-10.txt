@@ -1,0 +1,182 @@
+✗ src/content/blog/account-device-proxy-guide.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/account-first-three-days.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/account-grouping-strategy.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/agency-contract-responsibility-boundaries.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/agency-pricing-models.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/ainnc-start.md 有 1 段不达标、2 项结构问题：
+  正文段落1: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「欢迎来到 Ainnc 博客。 这个博客不是用来发布空泛产品新闻的。我们更希望它成为一份面向代运营机构...」
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/asset-library-adoption.md 有 0 段不达标、2 项结构问题：
+  结构: TL;DR 应为2-4句(当前1句)
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/asset-library-reuse.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/automatic-task-retry-risk.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/batch-publish-stop-conditions.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/blunt-client-communication.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/client-content-approval-deadline.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/client-group-chat-still-misses-requests.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/client-offboarding-account-handoff.md 有 1 段不达标、1 项结构问题：
+  正文段落2: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「建议在终止日前至少 7 天启动交接，并把对象分成六类。第一类是账号本身，包括用户名、当前角色、恢复邮...」
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/client-rush-request-triage.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/cloud-phone-vs-browser.md 有 1 段不达标、2 项结构问题：
+  正文段落1: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「具体来说，做社媒账号运营时，很多团队都会遇到同一个问题：到底用浏览器环境，还是用云手机环境？ 这不是...」
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/cloud-phone-vs-emulator.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/content-idea-meeting-no-one-says-no.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/content-portfolio-not-every-account-chase-trends.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/cross-border-ecommerce-social-accounts.md 有 0 段不达标、4 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前1个)
+  结构: FAQ问题1不是问句
+  结构: FAQ回答1应为30-60字(当前192字)
+✗ src/content/blog/daily-posting-promise-hurts-renewal.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/dashboard-should-help-stop-work.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/device-account-limit.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/employee-offboarding-account-access.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/engagement-up-business-flat.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/fewer-posts-better-content.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/global-brand-scale.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/global-brand-voice-consistency.md 有 1 段不达标、1 项结构问题：
+  正文段落2: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「一套可执行的全球语气规范可以分成三层。第一层是不可改变的内容，包括产品事实、价格、法律表述、品牌价值...」
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/global-content-calendar-desync.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/headquarters-vs-local-publish-authority.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/hiring-tool-vs-account-judgment.md 有 0 段不达标、2 项结构问题：
+  结构: TL;DR 应为2-4句(当前1句)
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/instagram-multi-account-content-overlap.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/legacy-account-audit.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/localization-how-deep.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/low-price-client-management-cost.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/mcn-prove-value-with-data.md 有 1 段不达标、2 项结构问题：
+  正文段落2: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「很多机构在续约会议上最怕客户问一句：“这些账号这个月具体带来了什么变化？”如果团队只能回答发布数量、...」
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/monthly-report-trust.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/multi-account-ab-test-errors.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/multi-platform-device-management.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/new-client-first-week.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/no-disagreement-in-review-meeting.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/one-workflow-five-tools.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/operations-handoff-loses-judgment.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/operations-team-efficiency.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/overseas-social-tools-checklist.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/peak-season-scaling.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/proxy-ip-types.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/real-social-ops-platform.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/reddit-brand-advertising-tone.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/scaling-social-account-operations.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/shared-password-risk.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/should-agency-guarantee-follower-growth.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/small-language-market-translator-vs-operator.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/spreadsheets-break-50.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/standardization-trap.md 有 0 段不达标、2 项结构问题：
+  结构: TL;DR 应为2-4句(当前1句)
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/task-center.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/task-files-publishing.md 有 1 段不达标、2 项结构问题：
+  正文段落1: 疑似说明书腔，平行罗列句式过多，需要改写成推理叙述 — 「很多团队一开始做内容发布时，会把素材管理理解成“找个地方存文件”。视频放网盘，图片放文件夹，文案放文...」
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/team-scale-chaos.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/tiktok-account-banned.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/tiktok-rate-limit.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/tiktok-risk-guide.md 有 0 段不达标、2 项结构问题：
+  结构: 缺少 TL;DR 引用块
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/tiktok-vs-instagram-same-video.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/too-professional-to-share.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/unlimited-revisions-content-rhythm.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/useful-social-ops-audit-log.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/viral-content-across-account-matrix.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/viral-content-slowdown.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/viral-small-sample-not-growth-model.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/when-to-end-client-project.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+✗ src/content/blog/x-scheduling-real-time.md 有 0 段不达标、1 项结构问题：
+  结构: FAQ 至少需要2个真实问句(当前0个)
+汇总：检查 70 篇，0 篇通过，70 篇未通过

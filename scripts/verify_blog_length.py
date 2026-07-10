@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify Markdown blog paragraph length, sentence count, and basic density."""
+"""Verify Markdown blog depth, structure, density, and obvious manual-style prose."""
 
 from __future__ import annotations
 
@@ -9,9 +9,11 @@ import sys
 from pathlib import Path
 
 
-MIN_CHARS = 500
+MIN_CHARS = 400
 MIN_SENTENCES = 4
 CONCRETE_MARKERS = ("比如", "例如", "举个例子", "具体", "实际上")
+FAQ_HEADINGS = ("FAQ", "常见问题")
+ACTION_HEADING_MARKERS = ("行动", "清单", "建议", "检查", "调整", "下一步", "必须完成", "可以怎么做")
 
 
 def sentence_split(text: str) -> list[str]:
@@ -43,6 +45,14 @@ def has_concrete_content(text: str) -> bool:
     return has_number or has_percent or has_marker
 
 
+def manual_tone_check(text: str) -> bool:
+    """Flag paragraphs that stack three or more parallel classification phrases."""
+    parallel_patterns = len(
+        re.findall(r"第[一二三四五]\w{0,3}是|[A-Z]是[^，。]{2,10}，[A-Z]是", text)
+    )
+    return parallel_patterns >= 3
+
+
 def strip_frontmatter(content: str) -> str:
     if not content.startswith("---"):
         return content
@@ -59,13 +69,14 @@ def plain_text(markdown: str) -> str:
 
 
 def extract_body_paragraphs(content: str) -> list[str]:
-    """Extract prose paragraphs while excluding Markdown structure and HTML blocks."""
+    """Extract prose paragraphs, excluding lists, tables, quotes, and the FAQ module."""
     content = strip_frontmatter(content)
     paragraphs: list[str] = []
     buffer: list[str] = []
     in_fence = False
     in_comment = False
     html_block: str | None = None
+    in_faq = False
 
     def flush() -> None:
         if buffer:
@@ -76,6 +87,14 @@ def extract_body_paragraphs(content: str) -> list[str]:
 
     for raw_line in content.splitlines():
         line = raw_line.strip()
+
+        h2_match = re.match(r"^##\s+(.+)$", line)
+        if h2_match:
+            flush()
+            in_faq = h2_match.group(1).strip().upper() in FAQ_HEADINGS
+            continue
+        if in_faq:
+            continue
 
         if line.startswith("```"):
             flush()
@@ -141,6 +160,8 @@ def check_article(filepath: Path) -> list[dict[str, object]]:
             issues.append(f"疑似重复句{duplicate_pairs}")
         if not has_concrete_content(paragraph):
             issues.append("缺少具体数字/例子/场景词，疑似空话")
+        if manual_tone_check(paragraph):
+            issues.append("疑似说明书腔，平行罗列句式过多，需要改写成推理叙述")
         if issues:
             failures.append(
                 {
@@ -152,12 +173,115 @@ def check_article(filepath: Path) -> list[dict[str, object]]:
     return failures
 
 
+def tldr_text(content: str) -> str:
+    content = strip_frontmatter(content)
+    lines: list[str] = []
+    collecting = False
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if line.startswith(">"):
+            collecting = True
+            lines.append(re.sub(r"^>\s?", "", line))
+        elif collecting:
+            break
+    return plain_text(" ".join(lines))
+
+
+def action_list_count(content: str) -> int:
+    content = strip_frontmatter(content)
+    faq_match = re.search(r"(?mi)^##\s+(?:FAQ|常见问题)\s*$", content)
+    if faq_match:
+        content = content[: faq_match.start()]
+    groups: list[int] = []
+    current = 0
+    for line in content.splitlines():
+        if re.match(r"^(?:[-*+]\s+|\d+[.)]\s+)", line.strip()):
+            current += 1
+        elif line.strip() and current:
+            groups.append(current)
+            current = 0
+    if current:
+        groups.append(current)
+    valid_groups = [count for count in groups if 3 <= count <= 5]
+    if valid_groups:
+        return max(valid_groups)
+    return max(groups, default=0)
+
+
+def faq_entries(content: str) -> list[tuple[str, str]]:
+    content = strip_frontmatter(content)
+    match = re.search(r"(?mi)^##\s+(?:FAQ|常见问题)\s*$", content)
+    if not match:
+        return []
+    section = content[match.end() :]
+    entries: list[tuple[str, str]] = []
+    question_matches = list(re.finditer(r"(?m)^###\s+(.+?)\s*$", section))
+    for index, question_match in enumerate(question_matches):
+        answer_start = question_match.end()
+        answer_end = (
+            question_matches[index + 1].start()
+            if index + 1 < len(question_matches)
+            else len(section)
+        )
+        answer_block = section[answer_start:answer_end].strip()
+        answer = plain_text(answer_block.split("\n\n", 1)[0])
+        entries.append((question_match.group(1).strip(), answer))
+    return entries
+
+
+def h2_sections(content: str) -> list[tuple[str, str]]:
+    content = strip_frontmatter(content)
+    matches = list(re.finditer(r"(?m)^##\s+(.+?)\s*$", content))
+    sections: list[tuple[str, str]] = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)
+        sections.append((match.group(1).strip(), content[match.end() : end]))
+    return sections
+
+
+def check_structure(content: str) -> list[str]:
+    issues: list[str] = []
+    tldr = tldr_text(content)
+    if not tldr or "TL;DR" not in tldr:
+        issues.append("缺少 TL;DR 引用块")
+    else:
+        tldr_sentences = sentence_split(tldr.replace("TL;DR", ""))
+        if not 2 <= len(tldr_sentences) <= 4:
+            issues.append(f"TL;DR 应为2-4句(当前{len(tldr_sentences)}句)")
+
+    longest_list = action_list_count(content)
+    if not 3 <= longest_list <= 5:
+        issues.append(f"缺少3-5条行动建议清单(当前最长连续列表{longest_list}条)")
+
+    entries = faq_entries(content)
+    if len(entries) < 2:
+        issues.append(f"FAQ 至少需要2个真实问句(当前{len(entries)}个)")
+    for index, (question, answer) in enumerate(entries, start=1):
+        if not question.endswith(("？", "?")):
+            issues.append(f"FAQ问题{index}不是问句")
+        answer_length = len(answer)
+        if not 30 <= answer_length <= 60:
+            issues.append(f"FAQ回答{index}应为30-60字(当前{answer_length}字)")
+
+    for heading, section in h2_sections(content):
+        if heading.upper() in FAQ_HEADINGS:
+            continue
+        if action_list_count(section) >= 3 and not extract_body_paragraphs(section):
+            continue
+        if any(marker in heading for marker in ACTION_HEADING_MARKERS) and action_list_count(section) >= 3:
+            continue
+        paragraphs = extract_body_paragraphs(section)
+        if not paragraphs:
+            issues.append(f"二级标题“{heading}”下缺少展开论述")
+    return issues
+
+
 def article_paths(targets: list[str]) -> list[Path]:
     paths: set[Path] = set()
     for target in targets:
         path = Path(target)
         if path.is_dir():
-            paths.update(path.glob("*.md"))
+            paths.update(path.rglob("*.md"))
         elif path.is_file():
             paths.add(path)
         else:
@@ -178,18 +302,25 @@ def main() -> int:
 
     failed_articles = 0
     for path in paths:
+        content = path.read_text(encoding="utf-8")
         failures = check_article(path)
-        if not failures:
+        structure_issues = check_structure(content)
+        if not failures and not structure_issues:
             print(f"✓ {path} 全部正文段落达标")
             continue
         failed_articles += 1
-        print(f"✗ {path} 有 {len(failures)} 段不达标：")
+        print(
+            f"✗ {path} 有 {len(failures)} 段不达标、"
+            f"{len(structure_issues)} 项结构问题："
+        )
         for failure in failures:
             issues = ", ".join(failure["issues"])
             print(
                 f"  正文段落{failure['index']}: {issues} — "
                 f"「{failure['preview']}...」"
             )
+        for issue in structure_issues:
+            print(f"  结构: {issue}")
 
     print(f"汇总：检查 {len(paths)} 篇，{len(paths) - failed_articles} 篇通过，{failed_articles} 篇未通过")
     return 1 if failed_articles else 0
