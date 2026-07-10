@@ -4,7 +4,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import PostCard from '../../components/PostCard.astro';
-import { SITE_COPY } from '../../i18n';
+import { getPostMeta, SITE_COPY } from '../../i18n';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -18,7 +18,24 @@ const frameworks = [
 	['product', 'Product Capabilities', 'Accounts, proxies, files, tasks, and usage management'],
 	['insights', 'Global Growth', 'Localization, multi-market scale, and brand expansion'],
 ];
-const topics = ['Operations Playbooks', 'Platform Guides', 'Product Capabilities', 'Global Growth', 'Task Reviews', 'Tutorials'];
+const topicDefinitions = [
+	{ label: 'Operations Playbooks', category: 'Operations Playbook' },
+	{ label: 'Product Capabilities', category: 'Product Capabilities' },
+	{ label: 'Platform Guides', category: 'Platform Guides' },
+	{ label: 'Global Growth', category: 'Global Growth' },
+	{ label: 'Tutorials', category: 'Tutorials' },
+	{ label: 'Task Reviews', category: 'Task Reviews' },
+];
+const topicCounts = posts.reduce<Record<string, number>>((counts, post) => {
+	const category = getPostMeta(post, 'en').category;
+	counts[category] = (counts[category] ?? 0) + 1;
+	return counts;
+}, {});
+const topicSizes = ['large', 'medium-primary', 'medium-secondary', 'small-blue', 'small-neutral', 'small-neutral'];
+const topics = topicDefinitions
+	.map((topic) => ({ ...topic, count: topicCounts[topic.category] ?? 0 }))
+	.sort((a, b) => b.count - a.count)
+	.map((topic, index) => ({ ...topic, size: topicSizes[index] }));
 const clusterDevices = [
 	{ id: 'DE-001', platform: 'TikTok', task: 'queue dispatch → TikTok', active: true },
 	{ id: 'FR-002', platform: 'Instagram', task: 'standby', active: false },
@@ -225,13 +242,23 @@ const clusterLogs = [
 				</div>
 			</section>
 
-			<section class="topics panel">
-				<div>
+			<section class="category-cloud">
+				<div class="category-cloud-copy">
 					<span class="eyebrow">Editorial Plan</span>
 					<h2>Topics We Will Keep Expanding</h2>
 				</div>
-				<ul>
-					{topics.map((topic) => <li>{topic}</li>)}
+				<ul class="category-pill-list" aria-label="Blog categories">
+					{
+						topics.map((topic) => (
+							<li
+								class="category-pill"
+								data-size={topic.size}
+								title={`${topic.label} · ${topic.count} ${topic.count === 1 ? 'article' : 'articles'}`}
+							>
+								{topic.label}
+							</li>
+						))
+					}
 				</ul>
 			</section>
 		</main>
@@ -1112,48 +1139,86 @@ const clusterLogs = [
 		margin-top: 0.35rem;
 	}
 
-	.topics {
+	.category-cloud {
 		display: grid;
-		grid-template-columns: minmax(18rem, 0.48fr) minmax(0, 1fr);
-		gap: clamp(1.5rem, 4vw, 4rem);
+		grid-template-columns: 280px minmax(0, 1fr);
+		gap: 40px;
 		align-items: center;
 		margin-top: clamp(3.5rem, 6vw, 5.5rem);
-		padding: clamp(1.5rem, 3vw, 3rem);
-		background:
-			linear-gradient(135deg, rgba(255, 255, 255, 96%), rgba(240, 255, 251, 90%)),
-			var(--surface);
+		border-radius: 24px;
+		background: #fff;
+		padding: 48px 44px;
+		box-shadow: 0 4px 24px rgba(6, 39, 42, 6%);
 	}
 
-	.topics h2 {
+	.category-cloud h2 {
 		margin-top: 0.65rem;
-		max-width: 460px;
-		font-size: clamp(1.55rem, 2vw, 2.2rem);
+		max-width: 280px;
+		font-size: 26px;
+		line-height: 1.4;
 	}
 
-	.topics ul {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1rem;
+	.category-pill-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
 		list-style: none;
 	}
 
-	.topics li {
-		border: 1px solid var(--line);
-		border-radius: 8px;
-		background: rgba(246, 249, 255, 72%);
-		padding: 1rem 1.1rem;
-		color: var(--text);
-		font-weight: 700;
+	.category-pill {
+		border-radius: 24px;
+		line-height: 1.25;
+		white-space: nowrap;
+		cursor: pointer;
 		transition:
-			border-color 0.2s ease,
-			background 0.2s ease,
-			transform 0.2s ease;
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
 	}
 
-	.topics li:hover {
-		border-color: rgba(0, 201, 170, 42%);
-		background: white;
-		transform: translateY(-2px);
+	.category-pill[data-size='large'] {
+		background: #e3fbf7;
+		padding: 12px 22px;
+		color: #00666b;
+		font-size: 16px;
+		font-weight: 700;
+	}
+
+	.category-pill[data-size='medium-primary'] {
+		background: #e1f5fb;
+		padding: 10px 20px;
+		color: #075e73;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.category-pill[data-size='medium-secondary'] {
+		background: #e2f7ee;
+		padding: 9px 18px;
+		color: #0b6b4e;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.category-pill[data-size='small-blue'] {
+		background: #e7eef6;
+		padding: 8px 16px;
+		color: #294869;
+		font-size: 13px;
+		font-weight: 500;
+	}
+
+	.category-pill[data-size='small-neutral'] {
+		background: #f5f3ee;
+		padding: 7px 15px;
+		color: #5f5e5a;
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.category-pill:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 18px rgba(6, 39, 42, 10%);
 	}
 
 	@keyframes matrix-pulse {
@@ -1250,9 +1315,12 @@ const clusterLogs = [
 		}
 
 		.framework-grid,
-		.topics,
-		.topics ul {
+		.category-cloud {
 			grid-template-columns: 1fr;
+		}
+
+		.category-cloud {
+			gap: 28px;
 		}
 
 		.latest-section {
@@ -1289,6 +1357,10 @@ const clusterLogs = [
 	}
 
 	@media (max-width: 520px) {
+		.category-cloud {
+			padding: 32px 24px;
+		}
+
 		.cluster-panel {
 			padding: 0.75rem;
 		}
