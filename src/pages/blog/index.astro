@@ -202,19 +202,28 @@ const heroLogRows = [
 		<script>
 			const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
 			const cards = document.querySelectorAll<HTMLElement>('#post-grid > [data-category]');
+			const applyCategoryFilter = (filter = '全部文章') => {
+				filterButtons.forEach((item) => item.classList.toggle('selected', item.dataset.filter === filter));
+				cards.forEach((card) => {
+					const visible = filter === '全部文章' || card.dataset.category === filter;
+					card.toggleAttribute('hidden', !visible);
+				});
+			};
 
 			filterButtons.forEach((button) => {
 				button.addEventListener('click', () => {
-					filterButtons.forEach((item) => item.classList.remove('selected'));
-					button.classList.add('selected');
-					const filter = button.dataset.filter;
-
-					cards.forEach((card) => {
-						const visible = filter === '全部文章' || card.dataset.category === filter;
-						card.toggleAttribute('hidden', !visible);
-					});
+					const filter = button.dataset.filter ?? '全部文章';
+					applyCategoryFilter(filter);
+					const nextUrl = new URL(window.location.href);
+					if (filter === '全部文章') nextUrl.searchParams.delete('category');
+					else nextUrl.searchParams.set('category', filter);
+					window.history.replaceState({}, '', nextUrl);
 				});
 			});
+
+			const requestedCategory = new URLSearchParams(window.location.search).get('category');
+			const requestedButton = Array.from(filterButtons).find((button) => button.dataset.filter === requestedCategory);
+			if (requestedCategory && requestedButton) applyCategoryFilter(requestedCategory);
 
 			const heroPanels = document.querySelectorAll<HTMLElement>('.page-head');
 			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;

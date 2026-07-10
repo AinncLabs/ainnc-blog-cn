@@ -1,11 +1,17 @@
 :root {
 	--page-max: 1120px;
-	--accent: #00c9aa;
-	--accent-dark: #007d76;
-	--text: #06272a;
+	--brand: #27dbc2;
+	--brand-mid: #00a6a4;
+	--brand-deep: #004e53;
+	--bg: #ebf6f6;
+	--text: #0a2c29;
+	--dim: #628680;
+	--line: rgba(0, 78, 83, 14%);
+	--amber: #d9821f;
+	--accent: var(--brand-mid);
+	--accent-dark: var(--brand-deep);
 	--muted: #3e6167;
 	--subtle: #7b989c;
-	--line: #d7eeea;
 	--surface: #ffffff;
 	--surface-soft: #f6f9ff;
 	--surface-blue: #e3fbf7;
