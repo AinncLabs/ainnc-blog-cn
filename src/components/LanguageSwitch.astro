@@ -1,16 +1,24 @@
 ---
-import { localizedPath } from '../i18n';
+import { hasEnglishPost, localizedPath } from '../i18n';
 
 const currentPath = Astro.url.pathname;
 const zhPath = localizedPath(currentPath, 'zh');
 const enPath = localizedPath(currentPath, 'en');
 const isEnglish = currentPath === '/en' || currentPath.startsWith('/en/');
+const chinesePostMatch = currentPath.match(/^\/blog\/([^/]+)\/?$/);
+const hasEnglishVersion = !chinesePostMatch || hasEnglishPost(chinesePostMatch[1]);
 ---
 
 <div class:list={['language-switch', { english: isEnglish }]} aria-label="Language switcher">
 	<div class="language-card">
 		<a class="language-face language-front" href={zhPath} aria-label="切换到中文">中文</a>
-		<a class="language-face language-back" href={enPath} aria-label="Switch to English">EN</a>
+		{
+			hasEnglishVersion ? (
+				<a class="language-face language-back" href={enPath} aria-label="Switch to English">EN</a>
+			) : (
+				<span class="language-face language-back" aria-disabled="true" title="English translation coming soon">EN</span>
+			)
+		}
 	</div>
 </div>
 
@@ -83,6 +91,11 @@ const isEnglish = currentPath === '/en' || currentPath.startsWith('/en/');
 			0 14px 28px rgba(0, 174, 176, 18%),
 			inset 0 1px 0 rgba(255, 255, 255, 40%),
 			inset 0 -10px 16px rgba(0, 91, 92, 14%);
+	}
+
+	.language-face[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.58;
 	}
 
 	.language-switch:hover .language-face,

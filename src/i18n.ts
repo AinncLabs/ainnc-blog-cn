@@ -2918,6 +2918,10 @@ export function getPostMeta(post: CollectionEntry<'blog'>, locale: Locale) {
 	};
 }
 
+export function hasEnglishPost(postId: string) {
+	return postId in EN_POSTS;
+}
+
 export function getEnglishSections(postId: string) {
 	return EN_POSTS[postId as keyof typeof EN_POSTS]?.sections ?? [];
 }

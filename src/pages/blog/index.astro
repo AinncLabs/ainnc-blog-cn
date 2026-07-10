@@ -40,11 +40,18 @@ const postOrder = [
 	'task-files-publishing',
 	'ainnc-start',
 ];
-const posts = (await getCollection('blog', (entry) => !entry.data.draft && postOrder.includes(entry.id))).sort((a, b) => {
-	const aOrder = postOrder.indexOf(a.id);
-	const bOrder = postOrder.indexOf(b.id);
-	return (aOrder === -1 ? 999 : aOrder) - (bOrder === -1 ? 999 : bOrder);
+const publishedPosts = await getCollection('blog', (entry) => !entry.data.draft);
+const postById = new Map(publishedPosts.map((post) => [post.id, post]));
+const orderedPosts = postOrder.flatMap((id) => {
+	const post = postById.get(id);
+	return post ? [post] : [];
 });
+const extraPosts = publishedPosts
+	.filter((post) => !postOrder.includes(post.id))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id));
+const posts = orderedPosts.length > 0
+	? [orderedPosts[0], ...extraPosts, ...orderedPosts.slice(1)]
+	: extraPosts;
 const featuredPost = posts[0];
 const gridPosts = posts.slice(1);
 const spanMap: Record<string, 'wide' | 'tall' | 'none'> = {
