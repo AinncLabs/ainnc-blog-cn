@@ -26,6 +26,28 @@ CONCRETE_MARKERS = (
     "第二",
     "第三",
 )
+ACTION_MARKERS = (
+    "建议",
+    "可以",
+    "先",
+    "不要",
+    "至少",
+    "检查",
+    "记录",
+    "第一",
+    "第二",
+    "第三",
+)
+FORBIDDEN_JARGON = (
+    "依赖关系",
+    "执行前提",
+    "颗粒度",
+    "抓手",
+    "赋能",
+    "闭环",
+    "链路",
+)
+EMPTY_OPENINGS = ("随着行业发展", "随着时代发展", "在当今时代", "众所周知")
 
 
 def sentence_split(text: str) -> list[str]:
@@ -54,6 +76,10 @@ def has_concrete_content(text: str) -> bool:
     return bool(re.search(r"\d", text)) or any(
         marker in text for marker in CONCRETE_MARKERS
     )
+
+
+def has_actionable_advice(text: str) -> bool:
+    return any(marker in text for marker in ACTION_MARKERS)
 
 
 def strip_frontmatter(content: str) -> str:
@@ -157,9 +183,9 @@ def extract_article(content: str) -> tuple[list[str], list[str], list[str]]:
 
 
 def check_article(filepath: Path) -> tuple[list[str], dict[str, int]]:
-    paragraphs, quotes, visible_chunks = extract_article(
-        filepath.read_text(encoding="utf-8")
-    )
+    content = filepath.read_text(encoding="utf-8")
+    body = strip_frontmatter(content)
+    paragraphs, quotes, visible_chunks = extract_article(content)
     article_text = " ".join(visible_chunks)
     compact_text = re.sub(r"\s+", "", article_text)
     sentences = sentence_split(article_text)
@@ -173,6 +199,9 @@ def check_article(filepath: Path) -> tuple[list[str], dict[str, int]]:
         issues.append(f"正文段落不足({len(paragraphs)}段)")
     if len(sentences) < MIN_SENTENCES:
         issues.append(f"全文句数不足({len(sentences)}句)")
+    heading_count = len(re.findall(r"^##\s+", body, flags=re.M))
+    if heading_count < 2:
+        issues.append(f"二级标题不足({heading_count}个，至少2个)")
 
     long_paragraphs = [
         (index, len(re.sub(r"\s+", "", paragraph)))
@@ -197,12 +226,22 @@ def check_article(filepath: Path) -> tuple[list[str], dict[str, int]]:
         issues.append(f"疑似重复句{duplicate_pairs}")
     if not has_concrete_content(article_text):
         issues.append("缺少数字或具体例子")
+    if not has_actionable_advice(article_text):
+        issues.append("缺少可以直接执行的建议")
+
+    jargon_hits = [word for word in FORBIDDEN_JARGON if word in article_text]
+    if jargon_hits:
+        issues.append(f"包含禁用黑话{jargon_hits}")
+    opening_hits = [phrase for phrase in EMPTY_OPENINGS if phrase in article_text]
+    if opening_hits:
+        issues.append(f"包含空泛开场{opening_hits}")
 
     metrics = {
         "chars": len(compact_text),
         "paragraphs": len(paragraphs),
         "sentences": len(sentences),
         "quotes": len(valid_quotes),
+        "headings": heading_count,
     }
     return issues, metrics
 
@@ -236,7 +275,8 @@ def main() -> int:
         issues, metrics = check_article(path)
         summary = (
             f"{metrics['chars']}字，{metrics['paragraphs']}段，"
-            f"{metrics['sentences']}句，{metrics['quotes']}条金句"
+            f"{metrics['sentences']}句，{metrics['headings']}个小标题，"
+            f"{metrics['quotes']}条金句"
         )
         if not issues:
             print(f"✓ {path} 文章达标（{summary}）")
