@@ -271,10 +271,11 @@ const clusterLogs = [
 			const taskCards = Array.from(document.querySelectorAll<HTMLElement>('[data-device-card]'));
 			const logTrack = document.querySelector<HTMLElement>('[data-log-track]');
 			const liveCount = document.querySelector<HTMLElement>('[data-live-count]');
-			let liveTaskIndex = 0;
 			let publishedCount = 2866;
 			const activeDevices = new Set(['DE-001', 'JP-005', 'BR-006']);
 			const taskLabels = new Map(liveTasks.map(([device, action, platform]) => [device, `${action} → ${platform}`]));
+			const taskDetails = new Map(liveTasks.map(([device, action, platform, status]) => [device, [action, platform, status]]));
+			const deviceIds = taskCards.map((card) => card.dataset.deviceId ?? '').filter(Boolean);
 			const progressTimers = new Map<HTMLElement, number>();
 
 			const startCardProgress = (card: HTMLElement) => {
@@ -296,8 +297,13 @@ const clusterLogs = [
 
 			const formatTime = () => new Date().toLocaleTimeString('en-US', { hour12: false });
 			const updateLiveTasks = () => {
-				const [device, action, platform, status] = liveTasks[liveTaskIndex % liveTasks.length];
-				liveTaskIndex += 1;
+				const inactiveDevices = deviceIds.filter((id) => !activeDevices.has(id));
+				const runningDevices = Array.from(activeDevices);
+				const device = inactiveDevices[Math.floor(Math.random() * inactiveDevices.length)] ?? deviceIds[0];
+				const deviceToPause = runningDevices[Math.floor(Math.random() * runningDevices.length)];
+				if (deviceToPause) activeDevices.delete(deviceToPause);
+				activeDevices.add(device);
+				const [action = 'processing task', platform = 'TikTok', status = 'running'] = taskDetails.get(device) ?? [];
 				taskCards.forEach((card) => {
 					const id = card.dataset.deviceId ?? '';
 					const statusNode = card.querySelector<HTMLElement>('.device-status');
@@ -361,7 +367,13 @@ const clusterLogs = [
 					startCardProgress(card);
 				}
 			});
-			window.setInterval(updateLiveTasks, 1850);
+			const scheduleLiveUpdate = () => {
+				window.setTimeout(() => {
+					updateLiveTasks();
+					scheduleLiveUpdate();
+				}, 1800 + Math.random() * 1400);
+			};
+			scheduleLiveUpdate();
 
 			document.querySelectorAll<HTMLElement>('.ticker-track').forEach((track) => {
 				requestAnimationFrame(() => {

@@ -10,10 +10,10 @@ const capabilities = [
 	['insights', 'Automated Task Center', 'Run login, warming, and publishing tasks in batches with traceable execution records.'],
 ];
 const audiences = [
-	['Cross-Border Sellers', 'Each market needs accounts, devices, timing, and content. Ainnc helps teams run accounts in independent cloud environments and organize publishing by target market.'],
-	['MCNs and Agencies', 'As signed accounts grow, maintenance and scheduling become expensive. Bulk assets, task queues, and shared dashboards keep repetitive work inside the system.'],
-	['Global Brand Teams', 'When teams lack local staff, local content, or devices, Ainnc gives them a structured workflow for accounts, content, publishing, and review.'],
-	['Why Infrastructure', 'Accounts, proxies, assets, and tasks share one record system instead of living across sheets, drives, and chat threads. Scale should not make the workflow messy.'],
+	['ops', 'Cross-Border Sellers', 'Each market needs accounts, devices, timing, and content. Ainnc helps teams run accounts in independent cloud environments and organize publishing by target market.'],
+	['platform', 'MCNs and Agencies', 'As signed accounts grow, maintenance and scheduling become expensive. Bulk assets, task queues, and shared dashboards keep repetitive work inside the system.'],
+	['insights', 'Global Brand Teams', 'When teams lack local staff, local content, or devices, Ainnc gives them a structured workflow for accounts, content, publishing, and review.'],
+	['product', 'Why Infrastructure', 'Accounts, proxies, assets, and tasks share one record system instead of living across sheets, drives, and chat threads. Scale should not make the workflow messy.'],
 ];
 const proofStats = [
 	['3', '+', 'years of social ops'],
@@ -27,6 +27,9 @@ const proofStats = [
 <html lang="en">
 	<head>
 		<BaseHead title="About Ainnc" description="Ainnc is social operations infrastructure for teams managing accounts, proxies, assets, and publishing tasks at scale." />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
 	</head>
 	<body>
 		<Header />
@@ -60,41 +63,51 @@ const proofStats = [
 				</div>
 			</section>
 
-			<section class="audience-grid">
-				{
-					audiences.map(([title, description]) => (
-						<article class="value-card">
-							<h2>{title}</h2>
-							<p>{description}</p>
-						</article>
-					))
-				}
-			</section>
-
-			<section class="capabilities">
-				<div class="section-header capability-header">
-					<div class="capability-title">
-						<span class="eyebrow">Product Capabilities</span>
-						<h2>One Console From Account Management to Publishing</h2>
-					</div>
-					<p>Built for scaled operations across TikTok, Instagram, Reddit, X, and similar platforms.</p>
-				</div>
-				<div class="capability-grid">
+			<section class="about-detail-section" aria-label="Ainnc audiences and product capabilities">
+				<div class="audience-grid" data-audience-reveal>
 					{
-						capabilities.map(([tone, title, description]) => (
-							<article class="capability-card" data-tone={tone}>
-								<h3>{title}</h3>
+						audiences.map(([tone, title, description]) => (
+							<article class="audience-item" data-tone={tone}>
+								<h2>{title}</h2>
 								<p>{description}</p>
 							</article>
 						))
 					}
 				</div>
-			</section>
 
-			<section class="stats-row" aria-label="Ainnc overview">
-				<div><strong>4</strong><span>covered platforms</span></div>
-				<div><strong>3</strong><span>core scenarios</span></div>
-				<div><strong>01</strong><span>unified console</span></div>
+				<div class="capability-shell" data-capability-reveal>
+					<div class="capability-header">
+						<div class="capability-title">
+							<span class="eyebrow">Product Capabilities</span>
+							<h2>One Console From Account Management to Publishing</h2>
+						</div>
+						<p>Built for scaled operations across TikTok, Instagram, Reddit, X, and similar platforms.</p>
+					</div>
+					<div class="capability-grid">
+						{
+							capabilities.map(([tone, title, description]) => (
+								<article class="capability-item" data-tone={tone}>
+									<h3>{title}</h3>
+									<p>{description}</p>
+								</article>
+							))
+						}
+					</div>
+					<div class="detail-stats" aria-label="Ainnc overview">
+						<div class="detail-stat">
+							<strong class="detail-stat-number" data-detail-count="4" data-duration="700">0</strong>
+							<span>covered platforms</span>
+						</div>
+						<div class="detail-stat">
+							<strong class="detail-stat-number" data-detail-count="3" data-duration="600">0</strong>
+							<span>core scenarios</span>
+						</div>
+						<div class="detail-stat">
+							<strong class="detail-stat-number accent" data-detail-count="1" data-duration="500" data-pad="2">00</strong>
+							<span>unified console</span>
+						</div>
+					</div>
+				</div>
 			</section>
 
 			<a class="blog-cta" href="/en/blog/">
@@ -162,6 +175,75 @@ const proofStats = [
 				);
 
 				counters.forEach((counter) => counterObserver.observe(counter));
+			}
+
+			const detailSection = document.querySelector<HTMLElement>('.about-detail-section');
+			const audienceGroup = document.querySelector<HTMLElement>('[data-audience-reveal]');
+			const capabilityGroup = document.querySelector<HTMLElement>('[data-capability-reveal]');
+			const audienceItems = Array.from(document.querySelectorAll<HTMLElement>('.audience-item'));
+			const capabilityItems = Array.from(document.querySelectorAll<HTMLElement>('.capability-item'));
+			const detailCounters = Array.from(document.querySelectorAll<HTMLElement>('.detail-stat-number'));
+
+			const formatDetailValue = (value: number, pad: number) => String(value).padStart(pad, '0');
+			const finishDetailCounter = (counter: HTMLElement) => {
+				const target = Number(counter.dataset.detailCount ?? 0);
+				const pad = Number(counter.dataset.pad ?? 1);
+				counter.textContent = formatDetailValue(target, pad);
+			};
+			const animateDetailCounter = (counter: HTMLElement) => {
+				if (counter.dataset.counted === 'true') return;
+				counter.dataset.counted = 'true';
+				const target = Number(counter.dataset.detailCount ?? 0);
+				const duration = Number(counter.dataset.duration ?? 600);
+				const pad = Number(counter.dataset.pad ?? 1);
+				const start = performance.now();
+
+				const tick = (now: number) => {
+					const progress = Math.min(1, (now - start) / duration);
+					const eased = 1 - Math.pow(1 - progress, 3);
+					counter.textContent = formatDetailValue(Math.round(target * eased), pad);
+					if (progress < 1) window.requestAnimationFrame(tick);
+				};
+
+				window.requestAnimationFrame(tick);
+			};
+			const revealSequence = (items: HTMLElement[], delays: number[]) => {
+				items.forEach((item, index) => {
+					const delay = delays[index] ?? 0;
+					window.setTimeout(() => {
+						item.classList.add('is-visible');
+						window.setTimeout(() => item.classList.add('reveal-complete'), 560);
+					}, delay);
+				});
+			};
+
+			if (reducedMotion || !('IntersectionObserver' in window)) {
+				detailCounters.forEach(finishDetailCounter);
+			} else if (detailSection) {
+				detailSection.classList.add('motion-ready');
+				if (audienceGroup) {
+					const audienceObserver = new IntersectionObserver(
+						(entries, observer) => {
+							if (!entries.some((entry) => entry.isIntersecting)) return;
+							revealSequence(audienceItems, [50, 150, 250, 350]);
+							observer.disconnect();
+						},
+						{ threshold: 0.18 },
+					);
+					audienceObserver.observe(audienceGroup);
+				}
+				if (capabilityGroup) {
+					const capabilityObserver = new IntersectionObserver(
+						(entries, observer) => {
+							if (!entries.some((entry) => entry.isIntersecting)) return;
+							revealSequence(capabilityItems, [100, 220, 340, 460]);
+							detailCounters.forEach(animateDetailCounter);
+							observer.disconnect();
+						},
+						{ threshold: 0.2 },
+					);
+					capabilityObserver.observe(capabilityGroup);
+				}
 			}
 		</script>
 	</body>
@@ -323,117 +405,270 @@ const proofStats = [
 		font-weight: 800;
 	}
 
-	.audience-grid,
-	.capability-grid,
-	.stats-row {
-		display: grid;
-		gap: 1rem;
+	.about-detail-section {
 		margin-bottom: 2rem;
 	}
 
-	.capability-header {
+	.audience-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.62fr);
-		gap: 1.5rem;
-		align-items: end;
-		margin-bottom: 1.35rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 36px 48px;
+		margin-bottom: 64px;
+	}
+
+	.audience-item,
+	.capability-item {
+		--item-accent: var(--tone-ops);
+	}
+
+	.audience-item[data-tone='platform'],
+	.capability-item[data-tone='platform'] {
+		--item-accent: var(--tone-platform);
+	}
+
+	.audience-item[data-tone='product'],
+	.capability-item[data-tone='product'] {
+		--item-accent: var(--tone-product);
+	}
+
+	.audience-item[data-tone='insights'],
+	.capability-item[data-tone='insights'] {
+		--item-accent: var(--tone-insights);
+	}
+
+	.audience-item {
+		position: relative;
+		margin-left: -16px;
+		border-radius: 10px;
+		padding: 4px 16px;
+		cursor: pointer;
+		transition:
+			background 0.25s ease,
+			transform 0.25s ease;
+	}
+
+	.audience-item::before {
+		content: '';
+		position: absolute;
+		top: 4px;
+		bottom: 4px;
+		left: 0;
+		width: 2px;
+		border-radius: 2px;
+		background: var(--item-accent);
+		transition: width 0.25s ease;
+	}
+
+	.audience-item:hover {
+		background: rgba(255, 255, 255, 86%);
+		transform: translateX(4px);
+	}
+
+	.audience-item:hover::before {
+		width: 3px;
+	}
+
+	.audience-item h2 {
+		font-size: 15px;
+		font-weight: 700;
+	}
+
+	.audience-item p {
+		margin-top: 6px;
+		color: #5b6e6c;
+		font-size: 13px;
+		line-height: 1.7;
+	}
+
+	.capability-shell {
+		border-radius: 24px;
+		background: white;
+		padding: 48px 44px;
+		box-shadow: 0 4px 24px rgba(6, 39, 42, 6%);
+	}
+
+	.capability-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 16px;
+		margin-bottom: 36px;
 	}
 
 	.capability-title {
 		display: grid;
-		gap: 0.7rem;
+		gap: 14px;
 	}
 
 	.capability-title h2 {
-		max-width: 760px;
-		margin: 0;
-		line-height: 1.12;
+		max-width: 680px;
+		font-size: 26px;
+		font-weight: 900;
+		line-height: 1.2;
 	}
 
 	.capability-header p {
-		max-width: 520px;
-		justify-self: end;
-		margin: 0 0 0.12rem;
-		font-size: 1rem;
-		line-height: 1.75;
+		max-width: 280px;
+		color: #5b6e6c;
+		font-size: 13px;
+		line-height: 1.7;
 	}
 
-	.audience-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.capability-grid,
-	.stats-row {
+	.capability-grid {
+		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 20px;
+		margin-bottom: 36px;
 	}
 
-	.value-card,
-	.capability-card,
-	.stats-row div {
-		border: 1px solid var(--line);
-		border-radius: 8px;
-		background: white;
-		padding: 1.35rem;
-		box-shadow: 0 6px 18px rgba(15, 23, 42, 5%);
-	}
-
-	.value-card h2 {
+	.capability-item {
 		position: relative;
-		padding-left: 1.15rem;
-		font-size: 1.1rem;
+		margin: 0 -14px;
+		border-radius: 12px;
+		padding: 18px 14px 14px;
+		cursor: pointer;
+		transition:
+			background 0.25s ease,
+			box-shadow 0.25s ease,
+			transform 0.25s ease;
 	}
 
-	.value-card h2::before {
+	.capability-item::before {
 		content: '';
 		position: absolute;
-		top: 0.45rem;
-		left: 0;
-		width: 0.48rem;
-		height: 0.48rem;
-		border-radius: 2px;
-		background: var(--accent);
-		transform: rotate(45deg);
+		top: 0;
+		right: 14px;
+		left: 14px;
+		height: 2px;
+		background: var(--item-accent);
+		transform: scaleX(1);
+		transform-origin: left;
+		transition: transform 0.25s ease;
 	}
 
-	.value-card p,
-	.capability-card p {
-		margin-top: 0.55rem;
-		font-size: 0.95rem;
+	.capability-item:hover {
+		background: #f5fcfb;
+		box-shadow: 0 12px 24px rgba(6, 39, 42, 8%);
+		transform: translateY(-4px);
 	}
 
-	.capability-card {
-		border-top: 3px solid var(--cap-accent);
+	.capability-item:hover::before {
+		transform: scaleX(1.15);
 	}
 
-	.capability-card[data-tone='ops'] {
-		--cap-accent: var(--tone-ops);
+	.capability-item h3 {
+		font-size: 15px;
+		font-weight: 700;
 	}
 
-	.capability-card[data-tone='platform'] {
-		--cap-accent: var(--tone-platform);
+	.capability-item p {
+		margin-top: 8px;
+		color: #5b6e6c;
+		font-size: 12px;
+		line-height: 1.6;
 	}
 
-	.capability-card[data-tone='product'] {
-		--cap-accent: var(--tone-product);
+	.detail-stats {
+		display: flex;
+		align-items: center;
+		border-top: 1px solid #eef6f4;
+		padding-top: 24px;
 	}
 
-	.capability-card[data-tone='insights'] {
-		--cap-accent: var(--tone-insights);
+	.detail-stat {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		border-right: 1px solid #eef6f4;
+		padding: 0 32px;
 	}
 
-	.stats-row {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+	.detail-stat:first-child {
+		padding-left: 0;
 	}
 
-	.stats-row strong,
-	.stats-row span {
-		display: block;
+	.detail-stat:last-child {
+		border-right: 0;
+		padding-right: 0;
 	}
 
-	.stats-row strong {
-		color: var(--text);
-		font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-		font-size: 1.8rem;
+	.detail-stat-number {
+		display: inline-block;
+		color: #06272a;
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 22px;
+		font-weight: 700;
+		line-height: 1;
+		transition:
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.detail-stat-number.accent {
+		color: #00b1b3;
+	}
+
+	.detail-stat span {
+		color: #7a8e8b;
+		font-size: 12px;
+	}
+
+	.detail-stat:hover .detail-stat-number {
+		color: #00b1b3;
+		transform: translateY(-2px);
+	}
+
+	.motion-ready .audience-item,
+	.motion-ready .capability-item {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	.motion-ready .audience-item.is-visible,
+	.motion-ready .capability-item.is-visible {
+		animation: detail-fade-up 0.55s ease forwards;
+	}
+
+	.motion-ready .audience-item.reveal-complete,
+	.motion-ready .capability-item.reveal-complete {
+		opacity: 1;
+		transform: none;
+		animation: none;
+	}
+
+	.motion-ready .capability-item::before {
+		transform: scaleX(0);
+		transition-duration: 0.9s;
+		transition-timing-function: ease-out;
+	}
+
+	.motion-ready .capability-item.is-visible::before {
+		transform: scaleX(1);
+	}
+
+	.motion-ready .audience-item.reveal-complete:hover {
+		transform: translateX(4px);
+	}
+
+	.motion-ready .capability-item.reveal-complete:hover {
+		transform: translateY(-4px);
+	}
+
+	.motion-ready .capability-item.reveal-complete:hover::before {
+		transform: scaleX(1.15);
+	}
+
+	@keyframes detail-fade-up {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.blog-cta {
@@ -486,35 +721,37 @@ const proofStats = [
 		font-weight: 900;
 	}
 
-	@keyframes matrix-pulse {
-		0%,
-		100% {
-			opacity: 0.38;
-			transform: scale(0.94);
-		}
-
-		48% {
-			opacity: 1;
-			transform: scale(1);
-		}
-	}
-
 	@media (max-width: 900px) {
 		.capability-header {
-			grid-template-columns: 1fr;
-			gap: 0.75rem;
+			align-items: flex-start;
+			gap: 12px;
 		}
 
 		.capability-header p {
-			justify-self: start;
 			max-width: 100%;
 		}
 
 		.audience-grid,
-		.capability-grid,
-		.stats-row,
 		.proof-grid {
 			grid-template-columns: 1fr;
+		}
+
+		.audience-grid {
+			gap: 24px;
+			margin-bottom: 48px;
+		}
+
+		.capability-shell {
+			padding: 36px 28px;
+		}
+
+		.capability-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 24px 20px;
+		}
+
+		.detail-stat {
+			padding: 0 18px;
 		}
 
 		.hero-watermark {
@@ -523,6 +760,42 @@ const proofStats = [
 
 		.about-hero {
 			min-height: auto;
+		}
+	}
+
+	@media (max-width: 620px) {
+		.audience-item {
+			margin-left: 0;
+		}
+
+		.capability-shell {
+			padding: 28px 20px;
+		}
+
+		.capability-title h2 {
+			font-size: 23px;
+		}
+
+		.capability-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.detail-stats {
+			display: grid;
+			grid-template-columns: 1fr;
+			padding-top: 10px;
+		}
+
+		.detail-stat,
+		.detail-stat:first-child,
+		.detail-stat:last-child {
+			border-right: 0;
+			border-bottom: 1px solid #eef6f4;
+			padding: 14px 0;
+		}
+
+		.detail-stat:last-child {
+			border-bottom: 0;
 		}
 	}
 
