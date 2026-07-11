@@ -14,6 +14,7 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			category: z.string(),
+			contentType: z.enum(["guide", "comparison", "analysis", "opinion"]),
 			tags: z.array(z.string()).default([]),
 			tldr: z.array(z.string()).default([]),
 			faqIntent: z.string().min(12).optional(),

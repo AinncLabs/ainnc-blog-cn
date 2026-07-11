@@ -10,9 +10,15 @@ import sys
 from pathlib import Path
 
 
-MIN_CHARS = 400
-MIN_SENTENCES = 4
+MAX_PARAGRAPH_CHARS = 360
+MAX_SENTENCES = 5
 MAX_FAQ_SHARE = 0.15
+CONTENT_TYPE_RULES = {
+    "guide": {"min_paragraphs": 8, "min_chars": 1400, "min_h2": 3, "min_concrete": 2},
+    "comparison": {"min_paragraphs": 8, "min_chars": 1450, "min_h2": 3, "min_concrete": 2},
+    "analysis": {"min_paragraphs": 7, "min_chars": 1400, "min_h2": 0, "min_concrete": 1},
+    "opinion": {"min_paragraphs": 6, "min_chars": 1300, "min_h2": 0, "min_concrete": 0},
+}
 CONCRETE_MARKERS = ("比如", "例如", "举个例子", "具体", "实际上")
 FAQ_HEADINGS = ("FAQ", "常见问题")
 ACTION_HEADING_MARKERS = (
@@ -192,15 +198,13 @@ def check_article(filepath: Path) -> list[dict[str, object]]:
         char_count = len(paragraph)
         sentences = sentence_split(paragraph)
         issues: list[str] = []
-        if char_count < MIN_CHARS:
-            issues.append(f"字数不足({char_count}字)")
-        if len(sentences) < MIN_SENTENCES:
-            issues.append(f"句数不足({len(sentences)}句)")
+        if char_count > MAX_PARAGRAPH_CHARS:
+            issues.append(f"单段过长({char_count}字)，需要拆成更自然的阅读层次")
+        if len(sentences) > MAX_SENTENCES:
+            issues.append(f"单段句子过多({len(sentences)}句)，需要围绕一个重点重新分段")
         duplicate_pairs = repetition_check(sentences)
         if duplicate_pairs:
             issues.append(f"疑似重复句{duplicate_pairs}")
-        if not has_concrete_content(paragraph):
-            issues.append("缺少具体数字/例子/场景词，疑似空话")
         if manual_tone_check(paragraph):
             issues.append("疑似说明书腔，平行罗列句式过多，需要改写成推理叙述")
         if issues:
@@ -368,6 +372,15 @@ def action_list_count(content: str) -> int:
     return max(groups, default=0)
 
 
+def has_structured_aid(content: str) -> bool:
+    body = strip_frontmatter(content)
+    has_table = re.search(r"(?m)^\|\s*:?-{3,}", body) is not None
+    has_code = re.search(r"(?m)^```", body) is not None
+    has_visual = re.search(r"(?m)^<(?:figure|table)\b", body) is not None
+    has_action_list = action_list_count(body) >= 3
+    return has_table or has_code or has_visual or has_action_list
+
+
 def faq_entries(content: str) -> list[tuple[str, str]]:
     content = strip_frontmatter(content)
     match = re.search(r"(?mi)^##\s+(?:FAQ|常见问题)\s*$", content)
@@ -401,11 +414,16 @@ def h2_sections(content: str) -> list[tuple[str, str]]:
 
 def check_structure(content: str) -> list[str]:
     issues: list[str] = []
+    content_type = frontmatter_value(content, "contentType")
+    rules = CONTENT_TYPE_RULES.get(content_type)
+    if not rules:
+        issues.append("frontmatter 缺少有效 contentType；必须是 guide、comparison、analysis 或 opinion")
+
     tldr = tldr_text(content)
     if "TL;DR" in tldr:
         tldr_sentences = sentence_split(tldr.replace("TL;DR", ""))
-        if not 2 <= len(tldr_sentences) <= 4:
-            issues.append(f"TL;DR 应为2-4句(当前{len(tldr_sentences)}句)")
+        if not 1 <= len(tldr_sentences) <= 3:
+            issues.append(f"TL;DR 应为1-3句(当前{len(tldr_sentences)}句)")
 
     entries = faq_entries(content)
     has_markdown_faq = re.search(r"(?mi)^##\s+(?:FAQ|常见问题)\s*$", strip_frontmatter(content)) is not None
@@ -442,6 +460,52 @@ def check_structure(content: str) -> list[str]:
     body_paragraphs = extract_body_paragraphs(content)
     if not body_paragraphs:
         issues.append("文章缺少完整正文论述")
+    elif rules:
+        paragraph_count = len(body_paragraphs)
+        total_chars = sum(len(paragraph) for paragraph in body_paragraphs)
+        concrete_count = sum(has_concrete_content(paragraph) for paragraph in body_paragraphs)
+        non_faq_h2_count = sum(
+            heading.upper() not in FAQ_HEADINGS for heading, _ in h2_sections(content)
+        )
+        if paragraph_count < rules["min_paragraphs"]:
+            issues.append(
+                f"{content_type} 文章自然段不足：当前 {paragraph_count} 段，"
+                f"至少需要 {rules['min_paragraphs']} 段"
+            )
+        if total_chars < rules["min_chars"]:
+            issues.append(
+                f"{content_type} 文章正文展开不足：当前 {total_chars} 字，"
+                f"至少需要 {rules['min_chars']} 字"
+            )
+        if non_faq_h2_count < rules["min_h2"]:
+            issues.append(
+                f"{content_type} 文章层次不足：当前 {non_faq_h2_count} 个二级标题，"
+                f"至少需要 {rules['min_h2']} 个"
+            )
+        if concrete_count < rules["min_concrete"]:
+            issues.append(
+                f"{content_type} 文章缺少足够的数字、案例或具体场景："
+                f"当前 {concrete_count} 段，至少需要 {rules['min_concrete']} 段"
+            )
+        if content_type in {"guide", "comparison"} and not has_structured_aid(content):
+            issues.append(
+                f"{content_type} 文章缺少可直接使用的表格、清单、代码示例或流程辅助"
+            )
+
+    if re.search(r"(?m)^## 核心判断与执行背景$", strip_frontmatter(content)):
+        issues.append("仍在使用通用标题“核心判断与执行背景”，需要改成本文专属标题")
+    if re.search(r"(?m)^### 对照表、清单与执行参考$", strip_frontmatter(content)):
+        issues.append("仍在使用通用模块标题，需要说明这张表或清单具体解决什么问题")
+    boilerplate_phrases = (
+        "真正需要改变的不是再加一条规则",
+        "工具只有在减少重复确认、保留操作记录并帮助团队判断下一步时",
+        "可以马上做的三个调整",
+        "判断一个功能有没有用，看它能不能减少下一次沟通",
+        "下一批任务前要留下三类结论",
+    )
+    for phrase in boilerplate_phrases:
+        if phrase in content:
+            issues.append(f"仍含批量模板句“{phrase}”，需要改成本文独有的判断")
 
     ending_type = final_block_type(content)
     if ending_type != "prose":
