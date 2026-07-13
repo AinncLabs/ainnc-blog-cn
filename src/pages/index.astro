@@ -16,20 +16,31 @@ const topicCounts = posts.reduce<Record<string, number>>((counts, post) => {
 	return counts;
 }, {});
 const categoryCount = Object.keys(topicCounts).length;
-const trackDefinitions = [
+const allTrackDefinitions = [
 	['运营方法论', '规模化账号运营、团队协作与交付稳定性'],
 	['产品能力解读', '账号、代理、素材、任务和用量管理'],
 	['平台专题', 'TikTok、Instagram、Reddit、X 的执行差异'],
 	['出海观察', '本地化、多市场扩张与全球品牌运营'],
 	['数据与增长', '从内容信号到实验、停止条件和业务结果'],
 	['内容策略', '选题、表达、传播与可持续内容组合'],
+	['团队协作', '交接、复盘、协同与团队判断'],
+	['商业与交付', '定价、合同、客户边界与续约'],
+	['操作教程', '账号、设备和代理等实际配置步骤'],
+	['运营实践', '素材、任务与日常执行方法'],
+	['产品更新', 'Ainnc 功能与内容中心进展'],
 ] as const;
+const trackDefinitions = allTrackDefinitions.slice(0, 6);
 const tracks = trackDefinitions.map(([label, description], index) => ({
 	code: `TRK-${String(index + 1).padStart(2, '0')}`,
 	label,
 	description,
 	count: topicCounts[label] ?? 0,
 }));
+const featuredTrackLabels = new Set(trackDefinitions.map(([label]) => label));
+const trackOrder = new Map(allTrackDefinitions.map(([label], index) => [label, index]));
+const remainingTrackLabels = Object.keys(topicCounts)
+	.filter((label) => !featuredTrackLabels.has(label))
+	.sort((first, second) => (trackOrder.get(first) ?? 99) - (trackOrder.get(second) ?? 99));
 const categorySequence: Record<string, number> = {};
 const postCodes = new Map(
 	posts.map((post) => {
@@ -88,7 +99,7 @@ const clusterLogs = [
 					</p>
 					<div class="hero-stats" aria-label="博客内容概览">
 						<span><strong>{posts.length}</strong>篇文章</span>
-						<span><strong>4</strong>个核心栏目</span>
+						<span><strong>{categoryCount}</strong>个主题栏目</span>
 						<span><strong>1</strong>套运营底座</span>
 					</div>
 				</div>
@@ -234,6 +245,17 @@ const clusterLogs = [
 									</a>
 								))
 							}
+							<a class="content-track-row content-track-more" href="/blog/#blog-categories">
+								<span class="content-track-code">TRK-07+</span>
+								<span class="content-track-name">
+									<strong>查看全部栏目</strong>
+									<small>{remainingTrackLabels.join(' · ')}</small>
+								</span>
+								<span class="content-track-count">{String(remainingTrackLabels.length).padStart(2, '0')} 栏</span>
+								<span class="content-track-arrow">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+								</span>
+							</a>
 						</div>
 					</section>
 				</div>
@@ -1298,6 +1320,27 @@ const clusterLogs = [
 
 	.content-track-row:hover::before {
 		opacity: 1;
+	}
+
+	.content-track-more {
+		background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 7%, transparent), rgba(255, 255, 255, 28%) 58%, transparent);
+	}
+
+	.content-track-more .content-track-code {
+		color: var(--brand-mid);
+	}
+
+	.content-track-more .content-track-name strong {
+		color: var(--brand-deep);
+	}
+
+	.content-track-more .content-track-name small {
+		color: color-mix(in srgb, var(--dim) 82%, var(--brand-deep));
+	}
+
+	.content-track-more .content-track-arrow {
+		border-color: color-mix(in srgb, var(--brand-mid) 38%, transparent);
+		color: var(--brand-mid);
 	}
 
 	.content-track-code,

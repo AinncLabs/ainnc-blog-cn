@@ -183,7 +183,7 @@ const heroLogRows = [
 				)
 			}
 
-			<section class="filter-bar" aria-label="文章分类筛选">
+			<section class="filter-bar" id="blog-categories" aria-label="文章分类筛选">
 				{
 					categories.map((category, index) => (
 						<button class:list={['filter-pill', { selected: index === 0 }]} type="button" data-filter={category}>
