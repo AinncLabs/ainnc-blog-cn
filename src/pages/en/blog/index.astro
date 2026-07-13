@@ -6,7 +6,7 @@ import FormattedDate from '../../../components/FormattedDate.astro';
 import Header from '../../../components/Header.astro';
 import PostCard from '../../../components/PostCard.astro';
 import { getPostCode } from '../../../blogVisuals';
-import { getPostMeta, SITE_COPY } from '../../../i18n';
+import { getPostMeta, hasEnglishPost, SITE_COPY } from '../../../i18n';
 
 const postOrder = [
 	'scaling-social-account-operations',
@@ -40,11 +40,18 @@ const postOrder = [
 	'task-files-publishing',
 	'ainnc-start',
 ];
-const posts = (await getCollection('blog', (entry) => !entry.data.draft && postOrder.includes(entry.id))).sort((a, b) => {
-	const aOrder = postOrder.indexOf(a.id);
-	const bOrder = postOrder.indexOf(b.id);
-	return (aOrder === -1 ? 999 : aOrder) - (bOrder === -1 ? 999 : bOrder);
+const publishedPosts = await getCollection('blog', (entry) => !entry.data.draft && hasEnglishPost(entry.id));
+const postById = new Map(publishedPosts.map((post) => [post.id, post]));
+const orderedPosts = postOrder.flatMap((id) => {
+	const post = postById.get(id);
+	return post ? [post] : [];
 });
+const extraPosts = publishedPosts
+	.filter((post) => !postOrder.includes(post.id))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id));
+const posts = orderedPosts.length > 0
+	? [orderedPosts[0], ...extraPosts, ...orderedPosts.slice(1)]
+	: extraPosts;
 const featuredPost = posts[0];
 const featuredMeta = featuredPost ? getPostMeta(featuredPost, 'en') : undefined;
 const gridPosts = posts.slice(1);
@@ -178,7 +185,7 @@ const heroLogRows = [
 				)
 			}
 
-			<section class="filter-bar" aria-label="Post category filters">
+			<section class="filter-bar" id="blog-categories" aria-label="Post category filters">
 				{
 					categories.map((category, index) => (
 						<button class:list={['filter-pill', { selected: index === 0 }]} type="button" data-filter={category}>
@@ -200,19 +207,28 @@ const heroLogRows = [
 		<script>
 			const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
 			const cards = document.querySelectorAll<HTMLElement>('#post-grid > [data-category]');
+			const applyCategoryFilter = (filter = 'All Articles') => {
+				filterButtons.forEach((item) => item.classList.toggle('selected', item.dataset.filter === filter));
+				cards.forEach((card) => {
+					const visible = filter === 'All Articles' || card.dataset.category === filter;
+					card.toggleAttribute('hidden', !visible);
+				});
+			};
 
 			filterButtons.forEach((button) => {
 				button.addEventListener('click', () => {
-					filterButtons.forEach((item) => item.classList.remove('selected'));
-					button.classList.add('selected');
-					const filter = button.dataset.filter;
-
-					cards.forEach((card) => {
-						const visible = filter === 'All Articles' || card.dataset.category === filter;
-						card.toggleAttribute('hidden', !visible);
-					});
+					const filter = button.dataset.filter ?? 'All Articles';
+					applyCategoryFilter(filter);
+					const nextUrl = new URL(window.location.href);
+					if (filter === 'All Articles') nextUrl.searchParams.delete('category');
+					else nextUrl.searchParams.set('category', filter);
+					window.history.replaceState({}, '', nextUrl);
 				});
 			});
+
+			const requestedCategory = new URLSearchParams(window.location.search).get('category');
+			const requestedButton = Array.from(filterButtons).find((button) => button.dataset.filter === requestedCategory);
+			if (requestedCategory && requestedButton) applyCategoryFilter(requestedCategory);
 
 			const heroPanels = document.querySelectorAll<HTMLElement>('.page-head');
 			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;

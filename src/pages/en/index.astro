@@ -3,54 +3,54 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import PostCard from '../../components/PostCard.astro';
+import { getPostCode } from '../../blogVisuals';
 import { getPostMeta, hasEnglishPost, SITE_COPY } from '../../i18n';
+import '../../styles/home-content-console.css';
 
 const posts = (await getCollection('blog', (post) => !post.data.draft && hasEnglishPost(post.id))).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const featuredPost = posts.find((post) => post.data.featured) ?? posts[0];
-const featuredIndex = featuredPost ? posts.findIndex((post) => post.id === featuredPost.id) : 0;
 const latestPosts = posts.filter((post) => post.id !== featuredPost?.id).slice(0, 3);
-const frameworks = [
-	['ops', 'Operations Playbooks', 'Scaling accounts, team workflows, and delivery stability'],
-	['platform', 'Platform Guides', 'Execution differences across TikTok, Instagram, Reddit, and X'],
-	['product', 'Product Capabilities', 'Accounts, proxies, files, tasks, and usage management'],
-	['insights', 'Global Growth', 'Localization, multi-market scale, and brand expansion'],
-];
-const topicDefinitions = [
-	{ label: 'Operations Playbooks', category: 'Operations Playbook' },
-	{ label: 'Product Capabilities', category: 'Product Capabilities' },
-	{ label: 'Platform Guides', category: 'Platform Guides' },
-	{ label: 'Global Growth', category: 'Global Growth' },
-	{ label: 'Tutorials', category: 'Tutorials' },
-	{ label: 'Task Reviews', category: 'Task Reviews' },
-	{ label: 'Content Strategy', category: 'Content Strategy' },
-	{ label: 'Data & Growth', category: 'Data & Growth' },
-	{ label: 'Team Collaboration', category: 'Team Collaboration' },
-	{ label: 'Business & Delivery', category: 'Business & Delivery' },
-];
 const topicCounts = posts.reduce<Record<string, number>>((counts, post) => {
 	const category = getPostMeta(post, 'en').category;
 	counts[category] = (counts[category] ?? 0) + 1;
 	return counts;
 }, {});
-const topicSizes = [
-	'large',
-	'medium-primary',
-	'medium-secondary',
-	'small-blue',
-	'small-neutral',
-	'small-neutral',
-	'small-blue',
-	'small-neutral',
-	'small-neutral',
-	'small-neutral',
-];
-const topics = topicDefinitions
-	.map((topic) => ({ ...topic, count: topicCounts[topic.category] ?? 0 }))
-	.sort((a, b) => b.count - a.count)
-	.map((topic, index) => ({ ...topic, size: topicSizes[index] }));
+const allTrackDefinitions = [
+	['Operations Playbook', 'Scaled account operations, team workflows, and delivery stability'],
+	['Product Capabilities', 'Accounts, proxies, assets, tasks, and usage management'],
+	['Platform Guides', 'Execution differences across TikTok, Instagram, Reddit, and X'],
+	['Global Growth', 'Localization, multi-market expansion, and global brand operations'],
+	['Tutorials', 'Practical setup for accounts, devices, proxies, and publishing'],
+	['Operations', 'Assets, tasks, and repeatable day-to-day execution'],
+	['Product Updates', 'Ainnc product and content-center progress'],
+] as const;
+const categoryCount = Object.keys(topicCounts).length;
+const trackDefinitions = allTrackDefinitions.slice(0, 6);
+const tracks = trackDefinitions.map(([label, description], index) => ({
+	code: `TRK-${String(index + 1).padStart(2, '0')}`,
+	label,
+	description,
+	count: topicCounts[label] ?? 0,
+}));
+const featuredTrackLabels = new Set(trackDefinitions.map(([label]) => label));
+const remainingTrackLabels = Object.keys(topicCounts).filter((label) => !featuredTrackLabels.has(label));
+const categorySequence: Record<string, number> = {};
+const postCodes = new Map(
+	posts.map((post) => {
+		const category = getPostMeta(post, 'en').category;
+		const index = categorySequence[category] ?? 0;
+		categorySequence[category] = index + 1;
+		return [post.id, getPostCode(category, index)];
+	}),
+);
+const formatConsoleDate = (date: Date) => date.toISOString().slice(0, 10).replaceAll('-', '.');
+const featuredMeta = featuredPost ? getPostMeta(featuredPost, 'en') : undefined;
+const featuredTitle = featuredMeta?.title ?? '';
+const featuredAccent = featuredTitle.endsWith('Losing Control') ? 'Losing Control' : '';
+const featuredTitleLead = featuredAccent ? featuredTitle.slice(0, -featuredAccent.length).trimEnd() : featuredTitle;
+const tickerItems = ['ACCOUNT MATRIX', 'ASSET MANAGEMENT', 'TASK CENTER', 'GLOBAL SOCIAL OPS', 'CLOUD PHONE', 'PROXY IP', 'ASSET FILES', 'TASK QUEUE'];
 const clusterDevices = [
 	{ id: 'DE-001', platform: 'TikTok', task: 'queue dispatch', active: true },
 	{ id: 'FR-002', platform: 'Instagram', task: 'standby', active: false },
@@ -96,7 +96,7 @@ const clusterLogs = [
 					</p>
 					<div class="hero-stats" aria-label="Blog content overview">
 						<span><strong>{posts.length}</strong>articles</span>
-						<span><strong>4</strong>themes</span>
+						<span><strong>{categoryCount}</strong>content tracks</span>
 						<span><strong>1</strong>operations layer</span>
 					</div>
 				</div>
@@ -157,82 +157,122 @@ const clusterLogs = [
 				</div>
 			</section>
 
-			<section class="framework-section">
-				<div class="section-header">
-					<div>
-						<span class="eyebrow">Content Framework</span>
-						<h2>From Operational Problems to Product Capabilities</h2>
-					</div>
-					<p>A quick map for understanding Ainnc's product capabilities and editorial direction.</p>
-				</div>
-				<div class="framework-grid">
-					{
-						frameworks.map(([tone, title, description]) => (
-							<article class="framework-card" data-tone={tone}>
-								<h3>{title}</h3>
-								<p>{description}</p>
-							</article>
-						))
-					}
-				</div>
-			</section>
-
-			{
-				featuredPost && (
-					<section class="featured-section">
-						<div class="section-header">
-							<div>
-								<span class="eyebrow">Featured</span>
-								<h2>Start Here</h2>
-							</div>
-							<p>Build a first-layer understanding of scaled social operations, account matrices, and Ainnc workflows.</p>
+			<div class="content-console">
+				<div class="console-wrap">
+					<section class="content-statusbar" aria-label="Ainnc content center status">
+						<div class="content-brandmark">
+							<img src="/ainnc-logo-icon.webp" width="26" height="26" alt="" aria-hidden="true" />
+							<strong>Ainnc · Content Center</strong>
 						</div>
-						<PostCard post={featuredPost} featured index={featuredIndex} locale="en" />
+						<div class="content-status-data">
+							<span class="content-live"><i aria-hidden="true"></i>Continuously Updated</span>
+							<span>TRACKS {String(categoryCount).padStart(2, '0')}</span>
+							<span>ARTICLES {String(posts.length).padStart(2, '0')}</span>
+							<time data-utc-clock datetime="">UTC --:--:--</time>
+						</div>
 					</section>
-				)
-			}
 
-			<section class="latest-section">
-				<div class="section-header">
-					<div>
-						<span class="eyebrow">Latest</span>
-						<h2>Operations Guides</h2>
-					</div>
-					<a href="/en/blog/">All Articles</a>
-				</div>
-				<div class="post-grid">
-					{latestPosts.map((post) => <PostCard post={post} index={posts.findIndex((item) => item.id === post.id)} locale="en" />)}
-				</div>
-			</section>
-
-			<section class="category-cloud">
-				<div class="category-cloud-copy">
-					<span class="eyebrow">Current Directions</span>
-					<h2>An Expanding Set of Content Themes</h2>
-				</div>
-				<ul class="category-pill-list" aria-label="Blog categories">
 					{
-						topics.map((topic) => (
-							<li
-								class="category-pill"
-								data-size={topic.size}
-								title={`${topic.label} · ${topic.count} ${topic.count === 1 ? 'article' : 'articles'}`}
-							>
-								{topic.label}
-							</li>
-						))
+						featuredPost && featuredMeta && (
+							<section class="content-headline" aria-labelledby="content-headline-title">
+								<div class="content-headline-kicker">
+									<span class="content-post-id">{postCodes.get(featuredPost.id)}</span>
+									<span>{featuredMeta.category}</span>
+									<time datetime={featuredPost.data.pubDate.toISOString()}>{formatConsoleDate(featuredPost.data.pubDate)}</time>
+									<span class="content-recommended">● RECOMMENDED FIRST READ</span>
+								</div>
+								<h2 id="content-headline-title">
+									{featuredTitleLead}{featuredAccent && <> <span class="content-headline-glow">{featuredAccent}</span></>}
+								</h2>
+								<div class="content-headline-sub">
+									<p>{featuredMeta.description}</p>
+									<a class="content-primary-cta" href={`/en/blog/${featuredPost.id}/`}>
+										<span>Read Article</span>
+										<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+									</a>
+								</div>
+							</section>
+						)
 					}
-					<li class="category-more">
-						<span>More to come</span>
-						<span class="category-more-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-					</li>
-				</ul>
-			</section>
+
+					<section class="content-latest" aria-labelledby="content-latest-title">
+						<div class="content-section-head">
+							<h2 id="content-latest-title">LATEST — NEW ARTICLES</h2>
+							<a href="/en/blog/">ALL ARTICLES →</a>
+						</div>
+						<div class="content-latest-grid">
+							{
+								latestPosts.map((post) => {
+									const meta = getPostMeta(post, 'en');
+									return (
+										<a class="content-latest-pane" href={`/en/blog/${post.id}/`}>
+											<span class="content-latest-meta">
+												<strong>{postCodes.get(post.id)}</strong>
+												<span>{meta.category}</span>
+												<time datetime={post.data.pubDate.toISOString()}>{formatConsoleDate(post.data.pubDate)}</time>
+											</span>
+											<h3>{meta.title}</h3>
+											<p>{meta.description}</p>
+											<span class="content-read-link">
+												READ
+												<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+											</span>
+										</a>
+									);
+								})
+							}
+						</div>
+					</section>
+
+					<section class="content-tracks" aria-labelledby="content-tracks-title">
+						<div class="content-tracks-head">
+							<h2 id="content-tracks-title">TRACKS — CONTENT CATEGORIES</h2>
+							<span>FEATURED {String(tracks.length).padStart(2, '0')} / ALL {String(categoryCount).padStart(2, '0')}</span>
+						</div>
+						<div class="content-track-list">
+							{
+								tracks.map((track) => (
+									<a class="content-track-row" href={`/en/blog/?category=${encodeURIComponent(track.label)}`}>
+										<span class="content-track-code">{track.code}</span>
+										<span class="content-track-name">
+											<strong>{track.label}</strong>
+											<small>{track.description}</small>
+										</span>
+										<span class="content-track-count">{String(track.count).padStart(2, '0')} ARTICLES</span>
+										<span class="content-track-arrow">
+											<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+										</span>
+									</a>
+								))
+							}
+							<a class="content-track-row content-track-more" href="/en/blog/#blog-categories">
+								<span class="content-track-code">TRK-07+</span>
+								<span class="content-track-name">
+									<strong>View All Content Tracks</strong>
+									<small>{remainingTrackLabels.length > 0 ? `${remainingTrackLabels.length} more: ${remainingTrackLabels.join(' · ')}` : 'Browse the complete translated catalog'}</small>
+								</span>
+								<span class="content-track-count">{String(categoryCount).padStart(2, '0')} TRACKS</span>
+								<span class="content-track-arrow">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+								</span>
+							</a>
+						</div>
+					</section>
+				</div>
+
+				<div class="content-ticker" aria-hidden="true">
+					<div class="content-ticker-track">
+						{[...tickerItems, ...tickerItems].map((item) => <span><i>✦</i>{item}</span>)}
+					</div>
+				</div>
+				<div class="content-console-pad" aria-hidden="true"></div>
+			</div>
 		</main>
 		<Footer />
 		<script>
 			const hero = document.getElementById('home-hero');
-			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+			const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion;
 
 			if (hero && supportsHover) {
 				hero.addEventListener('pointermove', (event) => {
@@ -361,18 +401,38 @@ const clusterLogs = [
 				}
 			};
 
-			taskCards.forEach((card) => {
-				if (card.classList.contains('active')) {
-					startCardProgress(card);
-				}
-			});
+			let liveUpdateTimer: number | undefined;
 			const scheduleLiveUpdate = () => {
-				window.setTimeout(() => {
+				liveUpdateTimer = window.setTimeout(() => {
 					updateLiveTasks();
 					scheduleLiveUpdate();
 				}, 1800 + Math.random() * 1400);
 			};
-			scheduleLiveUpdate();
+			if (!prefersReducedMotion) {
+				taskCards.forEach((card) => {
+					if (card.classList.contains('active')) startCardProgress(card);
+				});
+				scheduleLiveUpdate();
+			}
+
+			const utcClock = document.querySelector<HTMLTimeElement>('[data-utc-clock]');
+			const updateUtcClock = () => {
+				if (!utcClock) return;
+				const now = new Date();
+				const pad = (value: number) => String(value).padStart(2, '0');
+				utcClock.textContent = `UTC ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
+				utcClock.dateTime = now.toISOString();
+			};
+			updateUtcClock();
+			const utcClockTimer = window.setInterval(updateUtcClock, 1000);
+			const cleanupHomeTimers = () => {
+				window.clearInterval(utcClockTimer);
+				if (liveUpdateTimer) window.clearTimeout(liveUpdateTimer);
+				progressTimers.forEach((timer) => window.clearTimeout(timer));
+				progressTimers.clear();
+			};
+			window.addEventListener('pagehide', cleanupHomeTimers, { once: true });
+			document.addEventListener('astro:before-swap', cleanupHomeTimers, { once: true });
 
 		</script>
 	</body>
@@ -386,13 +446,21 @@ const clusterLogs = [
 
 	:global(body.home-page) {
 		background:
-			radial-gradient(circle at 20% 10%, rgba(46, 233, 208, 8%), transparent 50%),
-			radial-gradient(circle at 80% 40%, rgba(8, 145, 178, 6%), transparent 50%),
-			repeating-linear-gradient(90deg, rgba(6, 39, 42, 3%) 0 1px, transparent 1px 40px),
-			repeating-linear-gradient(180deg, rgba(6, 39, 42, 3%) 0 1px, transparent 1px 40px),
-			#f5fcfb;
+			radial-gradient(1000px 520px at 88% -12%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 65%),
+			radial-gradient(760px 460px at -12% 55%, color-mix(in srgb, var(--brand-mid) 10%, transparent), transparent 62%),
+			linear-gradient(color-mix(in srgb, var(--brand-deep) 3.5%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--brand-deep) 3.5%, transparent) 1px, transparent 1px),
+			var(--bg);
 		background-attachment: fixed;
 		background-position: center top;
+		background-size: auto, auto, 44px 44px, 44px 44px, auto;
+	}
+
+	:global(body.home-page main) {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
 	}
 
 	.home-hero {
@@ -410,7 +478,7 @@ const clusterLogs = [
 		justify-items: center;
 		overflow: hidden;
 		margin-inline: calc(50% - 50vw);
-		margin-bottom: 4rem;
+		margin-bottom: 0;
 		padding-inline: clamp(1rem, 3vw, 2rem);
 		text-align: center;
 	}
@@ -446,8 +514,8 @@ const clusterLogs = [
 		position: relative;
 		z-index: 3;
 		display: grid;
-		max-width: 760px;
-		gap: 1rem;
+		max-width: 900px;
+		gap: 1.15rem;
 		padding: clamp(2rem, 5vw, 4rem) 1rem 1.25rem;
 		justify-items: center;
 	}
@@ -479,9 +547,13 @@ const clusterLogs = [
 	}
 
 	.hero-copy h1 {
+		max-width: 900px;
 		color: #06272a;
-		font-size: clamp(2.35rem, 4vw, 46px);
+		font-size: clamp(2.75rem, 4.4vw, 58px);
 		font-weight: 900;
+		letter-spacing: -0.045em;
+		line-height: 1.08;
+		text-wrap: balance;
 	}
 
 	.hero-title-accent {
@@ -495,8 +567,9 @@ const clusterLogs = [
 	}
 
 	.hero-copy p {
-		max-width: 640px;
-		font-size: 1.08rem;
+		max-width: 700px;
+		font-size: clamp(1.05rem, 1.3vw, 1.18rem);
+		line-height: 1.75;
 	}
 
 	.hero-stats {
