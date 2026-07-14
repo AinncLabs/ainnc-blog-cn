@@ -14,11 +14,18 @@ from typing import TextIO
 MIN_PARAGRAPH_CHARS = 30
 MAX_PARAGRAPH_CHARS = 380
 MAX_SENTENCES = 5
-MIN_ARTICLE_PARAGRAPHS = 6
+MIN_PARAGRAPHS_BY_TYPE = {
+    "guide": 10,
+    "comparison": 10,
+    "analysis": 9,
+    "opinion": 8,
+}
 MAX_ARTICLE_AVERAGE_PARAGRAPH_CHARS = 280
 MAX_FAQ_SHARE = 0.15
+MAX_TLDR_SHARE = 0.15
+MAX_THREE_SECTION_SHARE = 0.30
 VALID_CONTENT_TYPES = {"guide", "comparison", "analysis", "opinion"}
-CONCRETE_MARKERS = ("比如", "例如", "举个例子", "具体", "实际上")
+CONCRETE_MARKERS = ("比如", "例如", "举个例子", "具体", "实际上", "假设", "场景")
 FAQ_HEADINGS = ("FAQ", "常见问题")
 ACTION_HEADING_MARKERS = (
     "行动建议",
@@ -436,12 +443,10 @@ def check_structure(content: str) -> list[str]:
         issues.append("frontmatter 缺少有效 contentType；必须是 guide、comparison、analysis 或 opinion")
 
     tldr = tldr_text(content)
-    if "TL;DR" not in tldr:
-        issues.append("缺少放在正文开头的 TL;DR 引用块")
-    else:
+    if "TL;DR" in tldr:
         tldr_sentences = sentence_split(tldr.replace("TL;DR", ""))
-        if not 2 <= len(tldr_sentences) <= 4:
-            issues.append(f"TL;DR 应为2-4句(当前{len(tldr_sentences)}句)")
+        if not 1 <= len(tldr_sentences) <= 4:
+            issues.append(f"保留的 TL;DR 应为1-4句(当前{len(tldr_sentences)}句)")
 
     entries = faq_entries(content)
     has_markdown_faq = re.search(r"(?mi)^##\s+(?:FAQ|常见问题)\s*$", strip_frontmatter(content)) is not None
@@ -490,9 +495,11 @@ def check_structure(content: str) -> list[str]:
     else:
         paragraph_count = len(body_paragraphs)
         average_chars = sum(len(paragraph) for paragraph in body_paragraphs) / paragraph_count
-        if paragraph_count < MIN_ARTICLE_PARAGRAPHS:
+        minimum_paragraphs = MIN_PARAGRAPHS_BY_TYPE.get(content_type, 8)
+        if paragraph_count < minimum_paragraphs:
             issues.append(
-                f"文章自然段不足：当前 {paragraph_count} 段，至少需要 {MIN_ARTICLE_PARAGRAPHS} 段"
+                f"文章自然段不足：当前 {paragraph_count} 段，"
+                f"{content_type or '当前类型'}文章至少需要 {minimum_paragraphs} 段"
             )
         if average_chars > MAX_ARTICLE_AVERAGE_PARAGRAPH_CHARS:
             issues.append(
@@ -510,6 +517,11 @@ def check_structure(content: str) -> list[str]:
         "可以马上做的三个调整",
         "判断一个功能有没有用，看它能不能减少下一次沟通",
         "下一批任务前要留下三类结论",
+        "产品能力要落到具体工作对象上",
+        "真正限制团队的不是数量，而是判断成本",
+        "把经验变成团队能共享的记录",
+        "两个方案真正的差异，通常在故障发生之后才暴露",
+        "先判断问题是不是成批出现",
     )
     for phrase in boilerplate_phrases:
         if phrase in content:
@@ -573,10 +585,21 @@ def main() -> int:
     fingerprint_counts: Counter[str] = Counter()
     dated_fingerprints: list[tuple[str, Path, str]] = []
     faq_article_paths: list[Path] = []
+    tldr_article_paths: list[Path] = []
+    exactly_three_section_paths: list[Path] = []
     for path in paths:
         content = path.read_text(encoding="utf-8")
         if faq_entries(content) or frontmatter_faq_count(content):
             faq_article_paths.append(path)
+        if "TL;DR" in tldr_text(content):
+            tldr_article_paths.append(path)
+        prose_sections = [
+            heading
+            for heading, section in h2_sections(content)
+            if heading.upper() not in FAQ_HEADINGS and extract_body_paragraphs(section)
+        ]
+        if len(prose_sections) == 3:
+            exactly_three_section_paths.append(path)
         fingerprint = structure_fingerprint(content)
         fingerprint_counts[fingerprint] += 1
         dated_fingerprints.append((publication_date(content), path, fingerprint))
@@ -643,8 +666,36 @@ def main() -> int:
         )
         print("  FAQ 只能用于真实搜索意图或正文难以自然展开的关键边界，不能作为文章默认模块。")
 
+    tldr_limit = max(2, int(len(paths) * MAX_TLDR_SHARE))
+    tldr_overuse = len(paths) >= 20 and len(tldr_article_paths) > tldr_limit
+    if tldr_overuse:
+        print(
+            f"✗ TL;DR 使用过多：{len(tldr_article_paths)}/{len(paths)} 篇，"
+            f"当前上限为 {tldr_limit} 篇（{MAX_TLDR_SHARE:.0%}）"
+        )
+        print("  TL;DR 是可选阅读辅助，不能成为每篇文章的统一开场模板。")
+
+    three_section_limit = max(3, int(len(paths) * MAX_THREE_SECTION_SHARE))
+    three_section_overuse = (
+        len(paths) >= 20 and len(exactly_three_section_paths) > three_section_limit
+    )
+    if three_section_overuse:
+        print(
+            f"✗ 三章节骨架使用过多：{len(exactly_three_section_paths)}/{len(paths)} 篇，"
+            f"当前上限为 {three_section_limit} 篇（{MAX_THREE_SECTION_SHARE:.0%}）"
+        )
+        print("  章节数量必须由论证需要决定，不能统一套用三段式。")
+
     print(f"汇总：检查 {len(paths)} 篇，{len(paths) - failed_articles} 篇通过，{failed_articles} 篇未通过")
-    exit_code = 1 if failed_articles or repeated_endings or overused_structures or consecutive_templates or faq_overuse else 0
+    exit_code = 1 if (
+        failed_articles
+        or repeated_endings
+        or overused_structures
+        or consecutive_templates
+        or faq_overuse
+        or tldr_overuse
+        or three_section_overuse
+    ) else 0
     if report_handle:
         sys.stdout.flush()
         sys.stdout = original_stdout
