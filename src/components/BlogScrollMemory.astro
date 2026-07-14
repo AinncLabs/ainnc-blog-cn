@@ -1,0 +1,180 @@
+---
+import type { Locale } from '../i18n';
+
+interface Props {
+	locale?: Locale;
+	mode: 'list' | 'article';
+}
+
+const { locale = 'zh', mode } = Astro.props;
+---
+
+<span
+	hidden
+	data-blog-scroll-memory
+	data-locale={locale}
+	data-mode={mode}
+	aria-hidden="true"
+></span>
+
+<script>
+	type BlogListState = {
+		href: string;
+		scrollY: number;
+		destination: string;
+		savedAt: number;
+	};
+
+	const controller = document.querySelector<HTMLElement>('[data-blog-scroll-memory]');
+
+	if (controller) {
+		const locale = controller.dataset.locale === 'en' ? 'en' : 'zh';
+		const mode = controller.dataset.mode;
+		const listPath = locale === 'en' ? '/en/blog/' : '/blog/';
+		const storageKey = `ainnc:blog-list-state:${locale}`;
+		const pendingKey = `ainnc:blog-list-restore:${locale}`;
+		const maxStateAge = 2 * 60 * 60 * 1000;
+
+		const removeStoredState = () => {
+			try {
+				sessionStorage.removeItem(storageKey);
+				sessionStorage.removeItem(pendingKey);
+			} catch {
+				// Storage may be unavailable in hardened/private browser contexts.
+			}
+		};
+
+		const readStoredState = (): BlogListState | null => {
+			try {
+				const rawState = sessionStorage.getItem(storageKey);
+				if (!rawState) return null;
+				const state = JSON.parse(rawState) as Partial<BlogListState>;
+				const stateUrl = typeof state.href === 'string' ? new URL(state.href, window.location.origin) : null;
+				const isValid = Boolean(
+					stateUrl
+					&& stateUrl.origin === window.location.origin
+					&& stateUrl.pathname === listPath
+					&& typeof state.scrollY === 'number'
+					&& Number.isFinite(state.scrollY)
+					&& typeof state.destination === 'string'
+					&& typeof state.savedAt === 'number'
+					&& Date.now() - state.savedAt < maxStateAge,
+				);
+
+				if (!isValid) {
+					removeStoredState();
+					return null;
+				}
+
+				return state as BlogListState;
+			} catch {
+				removeStoredState();
+				return null;
+			}
+		};
+
+		if (mode === 'list') {
+			const persistListState = (destination = '') => {
+				try {
+					const state: BlogListState = {
+						href: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+						scrollY: window.scrollY,
+						destination,
+						savedAt: Date.now(),
+					};
+					sessionStorage.setItem(storageKey, JSON.stringify(state));
+				} catch {
+					// Keep normal navigation working when storage is unavailable.
+				}
+			};
+
+			document.addEventListener('click', (event) => {
+				const target = event.target;
+				if (!(target instanceof Element)) return;
+				const link = target.closest<HTMLAnchorElement>('a[href]');
+				if (!link) return;
+
+				const destination = new URL(link.href, window.location.href);
+				const isArticleLink = destination.origin === window.location.origin
+					&& destination.pathname.startsWith(listPath)
+					&& destination.pathname !== listPath;
+
+				if (isArticleLink) {
+					persistListState(`${destination.pathname}${destination.search}${destination.hash}`);
+				}
+			}, { capture: true });
+
+			let shouldPersistOnPageHide = true;
+			window.addEventListener('pagehide', () => {
+				if (shouldPersistOnPageHide) persistListState(readStoredState()?.destination ?? '');
+			});
+
+			let restorePending = false;
+			try {
+				restorePending = sessionStorage.getItem(pendingKey) === '1';
+				if (restorePending) sessionStorage.removeItem(pendingKey);
+			} catch {
+				restorePending = false;
+			}
+
+			const storedState = restorePending ? readStoredState() : null;
+			const currentHref = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+			if (storedState && storedState.href === currentHref) {
+				shouldPersistOnPageHide = false;
+				const targetY = Math.max(0, storedState.scrollY);
+				const previousScrollRestoration = 'scrollRestoration' in window.history
+					? window.history.scrollRestoration
+					: null;
+
+				if (previousScrollRestoration !== null) window.history.scrollRestoration = 'manual';
+
+				let attempts = 0;
+				const restorePosition = () => {
+					attempts += 1;
+					window.scrollTo({ top: targetY, left: 0, behavior: 'instant' });
+					const reachedTarget = Math.abs(window.scrollY - targetY) <= 2;
+
+					if (!reachedTarget && attempts < 24) {
+						window.requestAnimationFrame(restorePosition);
+						return;
+					}
+
+					if (previousScrollRestoration !== null) {
+						window.history.scrollRestoration = previousScrollRestoration;
+					}
+					shouldPersistOnPageHide = true;
+				};
+
+				window.requestAnimationFrame(() => window.requestAnimationFrame(restorePosition));
+			}
+		}
+
+		if (mode === 'article') {
+			const backLink = document.querySelector<HTMLAnchorElement>('[data-blog-back]');
+			const storedState = readStoredState();
+			const currentArticle = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+			const referrerPath = (() => {
+				try {
+					const referrer = new URL(document.referrer);
+					return referrer.origin === window.location.origin ? referrer.pathname : '';
+				} catch {
+					return '';
+				}
+			})();
+			const continuedFromArticle = referrerPath.startsWith(listPath) && referrerPath !== listPath;
+			const belongsToSavedJourney = storedState?.destination === currentArticle || continuedFromArticle;
+
+			if (backLink && storedState && belongsToSavedJourney) {
+				backLink.href = storedState.href;
+				backLink.addEventListener('click', () => {
+					try {
+						sessionStorage.setItem(pendingKey, '1');
+					} catch {
+						// The link still returns to the saved filtered URL without scroll memory.
+					}
+				});
+			}
+		}
+	}
+</script>
