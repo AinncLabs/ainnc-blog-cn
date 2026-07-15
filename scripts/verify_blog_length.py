@@ -589,6 +589,9 @@ def main() -> int:
     exactly_three_section_paths: list[Path] = []
     for path in paths:
         content = path.read_text(encoding="utf-8")
+        if frontmatter_value(content, "verbatim").lower() == "true":
+            print(f"✓ {path} 按原文直出，跳过编辑性改写检查")
+            continue
         if faq_entries(content) or frontmatter_faq_count(content):
             faq_article_paths.append(path)
         if "TL;DR" in tldr_text(content):
