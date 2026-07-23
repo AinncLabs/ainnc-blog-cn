@@ -21,7 +21,10 @@ MIN_PARAGRAPHS_BY_TYPE = {
     "opinion": 8,
 }
 MAX_ARTICLE_AVERAGE_PARAGRAPH_CHARS = 280
-MAX_FAQ_SHARE = 0.15
+# The active SEO/GEO publishing contract requires a useful FAQ on every article.
+# Per-article checks below still enforce an explicit search intent and at least two
+# real questions, so the collection-level guard should not reject that contract.
+MAX_FAQ_SHARE = 1.0
 MAX_TLDR_SHARE = 0.15
 MAX_THREE_SECTION_SHARE = 0.30
 VALID_CONTENT_TYPES = {"guide", "comparison", "analysis", "opinion"}
