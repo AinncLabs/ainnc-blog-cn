@@ -25,7 +25,7 @@ briefSecondaryKeywords:
 briefTargetAudience: "决策者"
 briefTone: "专业中立"
 briefReadingScenario: "操作查阅"
-briefArticleType: "How-to"
+briefArticleType: "Industry Insight"
 briefTopicCluster: "发布稳定性"
 briefCompetingArticles:
   - "发布失败回归检查手册：先跑对了才可稳定放量（failure recovery playbook）"
@@ -63,7 +63,7 @@ tldr:
 
 一句话结论：先补齐边界定义，再复盘失败路径，最后再谈规模化。
 
-先回答三件事：发布失败回归检查手册（2289）适配什么场景、什么样的内容更容易过审核、失败后如何在 24 小时内修正发布通道。
+先回答三件事：发布失败回归检查手册（2561）适配什么场景、什么样的内容更容易过审核、失败后如何在 24 小时内修正发布通道。
 
 
 
