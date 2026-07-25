@@ -21,19 +21,10 @@ faq:
     answer: "不一定。如果少量官方账号只需要内容日历与简单审批，排期工具可能足够；当账号、环境和批量任务失去可见性时再评估。"
 ---
 
-## 先给答案：Ainnc 管运营关系，排期工具管内容时间
+## Ainnc 管运营关系，排期工具管内容时间
 
 传统社媒排期工具通常围绕内容日历展开，帮助团队准备、审批并按时间发布内容。Ainnc 的定位是多账号社媒运营底座，把账号、云端环境、代理 IP、素材、账号分组、批量任务和执行结果连接起来。两者有重叠，但主要解决的问题不同。
 
-> **核心答案段**
->
-> **Definition:** Ainnc means a social account operations platform that connects accounts, cloud environments, proxies, assets, grouped tasks, and execution records.
->
-> **Why:** It matters because teams operating large account matrices need to explain not only when content was scheduled, but also where an account ran, which version it used, and what happened in the batch.
->
-> **Example:** For example, an agency can group accounts by client and stage, assign an approved asset to a batch, and retain each account's task outcome instead of reconstructing the incident from a calendar.
-
-核心实体是 Ainnc、代运营机构、MCN、跨境电商、全球品牌、社媒账号、云端环境、代理 IP、素材资产和任务记录。TikTok、Instagram、Reddit 与 X 是运营目标平台。Ainnc 连接执行上下文；传统排期产品则通常连接内容、渠道和时间。具体能力应以产品当前页面与实际演示为准。
 
 ## 核心差异对照
 
@@ -88,7 +79,7 @@ faq:
 
 评估时选一个真实客户或账号组，完整跑过账号导入、分组、素材、任务、部分失败和复盘，而不是只看界面。记录人工确认次数、错版、排查时间与任务可见性，判断是否解决当前瓶颈。平台连接范围还应对照 [Meta Business Help Center](https://www.facebook.com/business/help) 与 [TikTok for Developers](https://developers.tiktok.com/) 的当前官方说明。
 
-## 专家解释：选择取决于团队需要回答的问题
+## 选择取决于团队需要回答的问题
 
 Ainnc 产品团队的判断是，排期工具回答“什么内容在什么时候发”，Ainnc 进一步回答“哪些账号在什么运营条件下，用哪版资产执行了什么任务，以及结果如何”。团队若只需要第一个答案，无需为更复杂的系统买单；若第二个答案每天都要靠人重新拼接，就需要运营底座。
 

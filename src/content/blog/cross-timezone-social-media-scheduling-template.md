@@ -21,21 +21,12 @@ faq:
     answer: "不建议。价格、活动、重大声明或高互动内容应安排可响应窗口，并明确异常负责人和暂停方式。"
 ---
 
-## 先给答案：一行排期必须同时写两个时间和一个责任人
+## 一行排期必须同时写两个时间和一个责任人
 
 跨时区社媒排期最稳妥的方法，是同时保存目标市场当地时间与统一基准时间（常用 UTC），并在同一行记录账号、平台、批准版本、值守人、夏令时状态和停止条件。这样运营、系统与本地团队看到的是同一个任务，而不是各自在脑中换算时间。
 
 例如，一条纽约当地 09:00 的内容应同时保存 09:00、对应 UTC 和 1 名上线值守人，避免跨日换算后无人验证。
 
-> **核心答案段**
->
-> **Definition:** Cross-time-zone social scheduling means planning a post with both its audience-facing local time and a single execution reference time.
->
-> **Why:** It matters because date boundaries, daylight-saving changes, and unavailable responders can turn a correct content plan into a wrong execution.
->
-> **Example:** For example, a New York post scheduled for 09:00 local time should also store its UTC execution time, daylight-saving status, approved asset ID, and on-duty owner.
-
-核心实体是目标市场、IANA 时区、UTC、夏令时、社媒账号、内容版本、发布任务和值守人。IANA 时区数据库维护地区时区规则；UTC 提供统一参考；TikTok、Instagram、Reddit 与 X 承载发布；Ainnc 等运营系统连接账号、素材、时间与任务结果。
 
 ## 可以直接复制的排期表字段
 
@@ -85,7 +76,7 @@ faq:
 
 例如一条计划 09:00、实际 09:27 上线的内容，应按 09:27 归入时间实验。若仍按 09:00 统计，团队会把执行延迟误认为发布时间效果。
 
-## 专家解释：跨时区排期首先是责任设计
+## 跨时区排期首先是责任设计
 
 Ainnc 内容运营组认为，时区换算已经可以由可靠软件完成，真正难的是让当地日期、批准版本和值守责任保持一致。一个精确到分钟的计划，如果发布后 2 小时无人检查链接，仍然不是好排期。
 

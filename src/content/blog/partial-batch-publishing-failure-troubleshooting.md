@@ -21,21 +21,12 @@ faq:
     answer: "没有通用阈值。应按平台、任务类型和账号价值建立自己的基线，同时观察失败原因是否集中，不能只看一个百分比。"
 ---
 
-## 先给答案：先冻结下一批，再比较失败账号的共同条件
+## 先冻结下一批，再比较失败账号的共同条件
 
 社媒批量发布部分成功、部分失败时，不应立刻对所有失败账号反复重试。先冻结尚未执行的批次，保存每个账号的成功页面或错误信息，把成功、失败和未知状态分开，再比较账号权限、素材版本、平台、环境、发布时间和任务参数中的共同条件。原因明确后，只用小批账号验证修复。
 
 例如，20 个账号中已有 13 个上线时，重新提交整个批次可能制造 13 条重复内容，因此必须先把 7 个失败账号单独建组。
 
-> **核心答案段**
->
-> **Definition:** Partial batch publishing failure means one task produced mixed outcomes across its target accounts instead of a single batch-wide result.
->
-> **Why:** It matters because retrying the whole batch can duplicate successful posts, erase the original evidence, and amplify a shared configuration error.
->
-> **Example:** For example, if 7 of 20 accounts fail with the same media-format error while 13 publish correctly, preserve both groups and test the asset hypothesis on one failed account before resuming the batch.
-
-核心实体包括发布任务、账号、社媒平台、素材资产、任务参数、账号环境、错误事件和线上页面。Ainnc 等运营平台用于把任务输入与账号结果连接起来；TikTok、Instagram、Reddit 或 X 返回平台侧结果；运营负责人决定暂停、修复与恢复。只有任务记录和真实页面对应，团队才能分清“提交成功”“页面成功”和“内容正确”。
 
 ## 第一步：在 10 分钟内保护现场
 
@@ -91,7 +82,7 @@ faq:
 
 如果新批次再次出现同类错误，立即停止并重新评估假设。若出现不同错误，则不要把它强行归入原问题。故障处理中最重要的数据点不是“最终全部发出”，而是每一步的条件、结果和决策是否保留。
 
-## 专家解释：混合结果本身就是定位信息
+## 混合结果本身就是定位信息
 
 Ainnc 运营研究组的判断是，部分成功并非纯粹坏消息。它说明至少有一部分输入组合可运行，成功组与失败组之间的差异就是排查线索。团队应把这次任务当作一次自然对照，而不是急着通过重试抹平差异。
 

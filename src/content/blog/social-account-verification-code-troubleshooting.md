@@ -21,21 +21,12 @@ faq:
     answer: "不应直接全量恢复。先确认账号安全设置和最近活动正常，再用小范围、低风险任务验证，记录结果后逐步恢复。"
 ---
 
-## 先给答案：暂停扩散，按官方流程验证，再找共同变化
+## 暂停扩散，按官方流程验证，再找共同变化
 
 社媒账号频繁要求验证码，通常表示平台需要再次确认登录者或敏感操作。团队应先暂停相关批量任务，保存提示时间与最近变更，由账号所有者通过平台官方验证流程处理；完成后不要立即全量恢复，而要检查设备、网络、权限、恢复信息和任务批次中是否存在共享变化。
 
 例如，同一小时内有 5 个账号出现验证时，应先冻结这组任务并比较共同条件，而不是让剩余账号继续尝试。
 
-> **核心答案段**
->
-> **Definition:** Repeated social-account verification means a platform is requesting additional proof before allowing a login or sensitive action.
->
-> **Why:** It matters because repeated retries can hide the original trigger, increase operational noise, and spread the same problem across a batch.
->
-> **Example:** For example, if five accounts assigned to one recently changed environment request verification within an hour, pause that group and review the shared change before touching the remaining accounts.
-
-核心实体包括社媒平台、账号所有者、登录会话、设备或云端环境、网络、恢复邮箱或手机号、团队权限和任务批次。平台负责验证身份；账号所有者承担恢复责任；Ainnc 之类的运营系统可以保留环境与任务记录，但不能替代 TikTok、Instagram 或 X 的官方安全流程，更不能用于绕过验证。
 
 ## 先区分单个账号问题与批次问题
 
@@ -78,7 +69,7 @@ TikTok、Instagram 和 X 都提供官方账号安全与恢复说明。应从应�
 
 例如，一组 30 个账号中有 4 个出现验证，可以先将 4 个账号隔离，由所有者处理；其余共享相同变更条件的账号暂停。验证完成后先恢复 1—2 个低价值账号完成一次普通检查任务，再决定是否恢复整个分组。这里的数量是流程示例，不是平台限制。
 
-## 专家解释：减少变化比“找到神奇配置”更重要
+## 减少变化比“找到神奇配置”更重要
 
 Ainnc 运营研究组的判断是，频繁验证码排查最怕同时改变太多条件。平台不会向运营团队公开所有安全信号，团队也不应尝试推断并规避检测。能做的是减少不必要的登录变化、使用官方团队权限、保留账号与环境关系、让每次异常有时间线。
 

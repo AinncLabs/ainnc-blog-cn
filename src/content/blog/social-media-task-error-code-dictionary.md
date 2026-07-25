@@ -15,21 +15,12 @@ faq:
     answer: "不等于。字典先描述证据与处置边界，只有经过验证、风险较低的错误才可能配置有限重试，其余仍需要人工判断。"
 ---
 
-## 先给答案：字典记录事实，不替平台“翻译原因”
+## 字典记录事实，不替平台“翻译原因”
 
 社媒任务失败代码字典不是把所有失败塞进几个模糊标签，而是为每一种可观察提示保存原文、来源、发生阶段、影响范围、证据位置、已验证处置和禁止动作。平台未给出明确原因时，应标为未知或待核验，而不是为了报表完整而猜测。
 
 例如，同样显示“发布未完成”，一个账号可能在媒体上传阶段中断，另一个可能在提交后无法确认页面。两者的操作边界不同，不能共享同一个“重试”按钮。
 
-> **核心答案段**
->
-> **Definition:** A social task error-code dictionary is a controlled record that links a platform or internal failure signal to its evidence, scope, safe next step, and review owner.
->
-> **Why:** It matters because repeated labels without original evidence make teams repeat the same unsafe troubleshooting choices.
->
-> **Example:** An entry can say that a media-format rejection was observed in a platform response, requires asset verification, and must not trigger a whole-batch retry before one account is tested.
-
-核心实体包括任务 ID、账号、平台响应、素材版本、任务阶段、内部分类、证据链接、处置负责人和复核结果。Ainnc 等运营记录系统可关联这些对象；平台响应是事实来源；内部字典只描述团队已经观察和验证过的含义。
 
 ## 把字典条目拆成“原始信号”和“内部判断”
 
@@ -59,7 +50,7 @@ faq:
 
 TikTok 的 [Business Help Center](https://ads.tiktok.com/help/)和 Meta 的 [Business Help Center](https://www.facebook.com/business/help)是核验当前平台说明的入口。内部字典应链接到实际查阅日期；它不能替代官方支持、政策或账号所有者的决定。
 
-## 专家解释：好字典会降低不确定性，不会假装消灭不确定性
+## 好字典会降低不确定性，不会假装消灭不确定性
 
 Ainnc 运营研究组认为，错误字典的价值不在于把每次失败自动归类，而在于保存区分条件：失败发生在哪一步、哪些账号受影响、哪些变量没有改变、什么修复经过了验证。例如 2 次相同提示却发生在不同阶段，就不应先合并成一个原因。未知原因被诚实保留，才有机会在下一次形成可靠模式。
 

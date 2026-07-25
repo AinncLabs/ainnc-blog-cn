@@ -22,21 +22,12 @@ faq:
     answer: "标准化证据、交接和风险边界，不要标准化所有观点与表达。SOP 应约束哪些信息不能丢，而不是规定每篇都使用相同章节和语气。"
 ---
 
-## 先给答案：好的 SOP 让内容更快，也让责任更清楚
+## 好的 SOP 让内容更快，也让责任更清楚
 
 社媒内容运营 SOP 是一套从需求进入到结果复盘的可重复工作方法。它不等于“每篇内容套同一模板”，而是明确每一步需要什么输入、由谁做决定、产生什么可检查的输出，以及什么情况下不能继续发布。团队规模越大，SOP 越应该保护事实、版本和责任，而不是只追求速度。
 
 例如，一条涉及产品价格的内容要同时保留来源、核验日期、批准版本与发布账号，不能只在群里收到一句“可以发”。
 
-> **核心答案段**
->
-> **Definition:** A social media content operations SOP means a documented workflow that connects briefs, evidence, assets, approvals, publishing tasks, and review decisions.
->
-> **Why:** It matters because content quality declines when context disappears between people and tools, even if production speed increases.
->
-> **Example:** For example, a campaign post should carry its approved claim, source, market version, owner, scheduled accounts, and stop condition into the publishing task instead of being reconstructed from chat messages.
-
-这套流程中的核心实体是内容需求、搜索问题、内容简报、事实来源、素材资产、审批人、平台账号、发布任务和复盘记录。品牌或客户提出需求，编辑将需求变成明确承诺，设计与作者制作资产，审批人承担事实与品牌责任，社媒平台接收内容，Ainnc 等运营系统连接账号、素材和执行结果。实体关系完整，内容才能在交接后保持原意。
 
 ## SOP 先解决交接损失，再解决生产速度
 
@@ -130,7 +121,7 @@ CISA 的[事件响应手册](https://www.cisa.gov/resources-tools/resources/fede
 
 建议每周记录五类数据点：按时完成率、等待时间最长的阶段、返工次数、发布错误类型、从内容到业务动作的有效信号。数字必须保持同一口径。月度再判断哪些状态可以删除、哪些审批可以简化、哪些风险需要增加控制。
 
-## 专家解释：标准化“证据”，不要标准化“灵气”
+## 标准化“证据”，不要标准化“灵气”
 
 Ainnc 内容运营组的观点是，SOP 最该标准化的是事实来源、版本、责任和异常处理，而不是每篇内容的开场、情绪和章节。创作需要差异，交付需要确定性。把这两者混在一起，团队要么得到千篇一律的内容，要么得到无法复盘的自由发挥。
 

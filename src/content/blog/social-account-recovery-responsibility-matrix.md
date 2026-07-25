@@ -15,21 +15,12 @@ faq:
     answer: "不会。它预先定义谁能暂停、谁保存证据、谁联系客户；紧急时减少等待和重复确认，比临时在群里找负责人更快。"
 ---
 
-## 先给答案：恢复账号前，先把“谁能做什么”写清楚
+## 恢复账号前，先把“谁能做什么”写清楚
 
 社媒账号出现登录异常、权限变化或平台限制时，最快的反应不一定是立即操作账号，而是先暂停非必要任务，保留当前证据，并让一个明确负责人协调下一步。社媒账号恢复责任矩阵把决定、执行、复核和知会分开，能防止两位同事同时重置、申诉或重新提交任务。
 
 例如，客户经理可以确认客户影响和沟通口径，账号负责人可以核对所有权与环境记录，事件负责人才能批准恢复。这里的角色分工是运营设计示例，不是任何平台的固定流程。
 
-> **核心答案段**
->
-> **Definition:** A social account recovery responsibility matrix maps each recovery decision, action, review, and notification to a named operating role.
->
-> **Why:** It prevents evidence loss and conflicting changes when an account incident involves a client, an operator, and a platform at the same time.
->
-> **Example:** If an Instagram account loses publishing permission, the incident lead pauses scheduled work, the account custodian captures the notice, and the client owner confirms the authorized contact before any recovery request is sent.
-
-核心实体包括社媒账号、账号所有者、运营执行人、事件负责人、客户负责人、云端环境、任务记录和平台支持渠道。Ainnc 可把账号分组、环境、素材和任务结果放在同一可追溯上下文；平台最终决定账号状态；团队则对自己的操作、沟通和证据负责。
 
 ## 先界定事件，而不是先给它起“封号”结论
 
@@ -65,7 +56,7 @@ Meta 的 [Business Help Center](https://www.facebook.com/business/help) 与 TikT
 
 例如，一次只验证 1 个账号、1 个已批准素材和 1 个允许的发布动作，结果写回事件记录。数字只是示例，重点是每次变更范围可解释。若异常复现，应回到暂停状态而非继续增加变量。
 
-## 专家解释：责任矩阵的价值是让恢复过程可审计
+## 责任矩阵的价值是让恢复过程可审计
 
 Ainnc 运营研究组的分析是，账号异常往往不是技术问题或客户问题二选一，而是所有权、环境、任务和沟通在同一时间交叉。例如，1 次误操作若没有记录，就可能在交接时被误认为平台问题。矩阵并不保证平台会恢复账号，却能保证团队知道谁作出了何种决定、依据是什么、下一次由谁接手。
 

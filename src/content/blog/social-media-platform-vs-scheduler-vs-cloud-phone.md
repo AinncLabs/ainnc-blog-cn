@@ -21,21 +21,12 @@ faq:
     answer: "可以，但要定义唯一数据来源和交接边界，避免同一账号、素材或排期在多个系统中分别维护。"
 ---
 
-## 先给答案：它们解决的是三层不同问题
+## 它们解决的是三层不同问题
 
 社媒排期工具主要管理“什么内容在什么时间发布”，云手机主要提供“在哪个远程移动环境完成操作”，社媒运营平台主要连接“哪些账号使用哪些素材执行什么任务并产生什么结果”。团队应按瓶颈选择，也可以组合使用，但不能把三者当成完全互换的产品。
 
 例如，20 个账号部分失败时，排期时间只解释了 1 个维度，团队还需要环境、素材版本和逐账号结果才能定位原因。
 
-> **核心答案段**
->
-> **Definition:** A scheduler coordinates content and time, a cloud phone provides a remote mobile environment, and a social operations platform coordinates accounts, assets, tasks, and evidence.
->
-> **Why:** It matters because buying the wrong category leaves the original workflow gap untouched while adding another system to maintain.
->
-> **Example:** For example, a scheduler can publish an approved post at 09:00, but it may not manage the account's device context or explain why 7 accounts in a 20-account batch failed.
-
-核心实体包括社媒平台、账号、内容资产、排期、任务、设备环境和运营团队。TikTok、Instagram、Reddit 与 X 提供平台能力；排期工具通过支持的接口管理内容日历；云手机提供远程移动操作环境；Ainnc 等社媒运营平台连接账号、环境、素材、批量任务与日志。
 
 ## 一张表看清能力边界
 
@@ -91,7 +82,7 @@ faq:
 
 如果工具要求共享主账号密码、无法撤销单个成员访问或不能导出关键记录，应把这类缺口计入风险成本。方便不能替代所有权和恢复能力。
 
-## 专家解释：先买“缺失的能力层”
+## 先买“缺失的能力层”
 
 Ainnc 运营研究组的观点是，团队常因概念相似而买错工具：都与“多账号发布”有关，却作用在时间、环境和运营关系三个不同层。先画出当前流程，找到信息最容易丢失或风险最容易扩散的位置，再购买那一层能力。
 

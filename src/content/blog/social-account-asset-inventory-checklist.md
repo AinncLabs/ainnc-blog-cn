@@ -21,21 +21,12 @@ faq:
     answer: "需要保留状态、停用原因、数据与素材归属、权限撤销和处理日期，避免未来被误当成可用账号重新进入任务。"
 ---
 
-## 先给答案：资产表记录控制关系，不记录群聊密码
+## 资产表记录控制关系，不记录群聊密码
 
 社媒账号资产盘点表应记录账号是谁的、谁能访问、如何恢复、使用哪个环境、服务哪个业务、当前状态和最后一次复核证据。密码与验证码不应直接放进普通表格；资产表只记录受控凭据入口和责任人。这样盘点的对象才是可管理资产，而不是一串用户名。
 
 例如，1 个 Instagram 主账号至少要能追溯所有者、当前管理员、恢复责任人和凭据库条目，而不是只留用户名与密码。
 
-> **核心答案段**
->
-> **Definition:** A social-account asset inventory means an authoritative record of ownership, access, recovery, operating context, business purpose, and review status for each account.
->
-> **Why:** It matters because an account is not operationally controlled when a team can log in but cannot prove ownership, revoke access, or recover it safely.
->
-> **Example:** For example, a client-owned Instagram account should list the client as owner, the approved operators, the credential-vault reference, the recovery contact, and the last access review.
-
-核心实体包括品牌或客户、社媒平台、账号、账号所有者、授权运营者、恢复方式、凭据系统、设备或云端环境、合同与业务项目。Ainnc 等运营系统可以把账号与环境、分组和任务连接；凭据管理系统保护认证信息；平台业务管理功能定义角色。两类系统职责不同，不应把资产表变成明文密码仓库。
 
 ## 12 个必填字段
 
@@ -90,7 +81,7 @@ CISA 提供的[强认证说明](https://www.cisa.gov/secure-our-world/use-strong
 
 NIST 网络安全框架 2.0 的[资产识别与治理资源](https://www.nist.gov/cyberframework)强调组织需要了解资产和责任。它不是社媒合同指南，但支持盘点的核心逻辑：不知道资产归属，就无法设计保护、响应和恢复。
 
-## 专家解释：能登录不等于拥有控制权
+## 能登录不等于拥有控制权
 
 Ainnc 运营研究组认为，团队最容易高估“当前能登录”的意义。浏览器里保留的会话可能随时失效，而真正的控制权来自清楚所有权、可撤销访问、受控恢复和持续复核。资产表要证明这些条件，而不是证明某位员工记得密码。
 

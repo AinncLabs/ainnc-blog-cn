@@ -15,21 +15,12 @@ faq:
     answer: "只要字段稳定就不会。用活动、市场、平台、内容类型、版本和状态等有限字段，比靠模糊文件名反复确认更省时间。"
 ---
 
-## 先给答案：版本名要能回答“给谁、在哪发、改过什么”
+## 版本名要能回答“给谁、在哪发、改过什么”
 
 多市场内容不应只靠“final”“final2”区分。多市场社媒内容版本命名规范至少说明活动、市场或语言、平台、内容对象、修订号和当前状态；对应的任务记录还要指向同一素材与审批结论。这样团队能在发布前判断手里的是不是正确版本，而不是靠最后一条聊天消息猜测。
 
 例如，`SPRING26_CN_TIKTOK_VIDEO_R03_APPROVED` 比“春季视频终版”更容易确认对象和状态。字段和缩写应由团队自己的系统约定，不是 Ainnc 或平台强制格式。
 
-> **核心答案段**
->
-> **Definition:** A multi-market content naming standard is a shared identifier that connects a campaign asset to its market, platform, revision, approval state, and publishing record.
->
-> **Why:** It matters because one global creative can become several legitimately different local versions after translation, disclosure, links, or timing change.
->
-> **Example:** A product video may share a campaign ID across Japan and Brazil, while each market keeps a separate language code and revision after its caption or landing-page URL is reviewed.
-
-核心实体是活动、市场、语言、平台、素材资产、文案、落地页、审批人、任务和发布时间。内容负责人定义可用版本；本地市场确认本地化与合规；Ainnc 等系统连接素材、账号组与任务；TikTok、Instagram、Reddit 或 X 则承载最终公开页面。
 
 ## 先区分“同一创意”与“同一可发布版本”
 
@@ -59,7 +50,7 @@ Meta 的 [Business Help Center](https://www.facebook.com/business/help)和 TikTo
 
 内容审批流程如果缺少状态切换记录，版本名再漂亮也会失效。[社媒内容审批工具选型](/blog/social-media-content-approval-tool-selection/)讨论了审批工具应保留哪些决策证据；关键不是选哪个工具，而是最终批准版本、批准人和时间是否可核验。
 
-## 专家解释：命名是跨市场协作的最小共同语言
+## 命名是跨市场协作的最小共同语言
 
 Ainnc 内容策略团队的分析是，多市场失误经常不是翻译质量问题，而是团队无法说明“当前要发哪一个版本”。稳定命名把讨论从“我以为是终版”变成可检查的对象、状态和关系，也让新成员能读懂旧任务。
 
