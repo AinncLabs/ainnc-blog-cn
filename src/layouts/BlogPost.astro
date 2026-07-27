@@ -132,6 +132,14 @@ const structuredData = { '@context': 'https://schema.org', '@graph': schemaGraph
 <html lang={isEnglish ? 'en' : 'zh-CN'}>
 	<head>
 		<BaseHead title={title} description={description} />
+		<script
+			defer
+			src="https://umami.aibotweb.xyz/privacy-consent-v2.js"
+			data-brand="Ainnc"
+			data-umami-src="https://umami.aibotweb.xyz/script.js"
+			data-website-id="1d477b3e-97bb-4cc5-b01e-fd8200c7bd6c"
+			data-consent-version="1"
+		></script>
 		<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 	</head>
 
