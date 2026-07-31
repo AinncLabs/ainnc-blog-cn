@@ -21,6 +21,8 @@ MIN_PARAGRAPHS_BY_TYPE = {
     "opinion": 8,
 }
 MAX_ARTICLE_AVERAGE_PARAGRAPH_CHARS = 280
+MIN_ARTICLE_HAN_CHARS = 1500
+MAX_ARTICLE_HAN_CHARS = 2500
 # The active SEO/GEO publishing contract requires a useful FAQ on every article.
 # Per-article checks below still enforce an explicit search intent and at least two
 # real questions, so the collection-level guard should not reject that contract.
@@ -34,6 +36,7 @@ ACTION_HEADING_MARKERS = (
     "行动建议",
     "行动清单",
     "检查清单",
+    "核对清单",
     "调整建议",
     "下一步",
     "必须完成",
@@ -43,6 +46,18 @@ ACTION_HEADING_MARKERS = (
     "决定前",
 )
 GENERIC_ENDING_HEADINGS = ("结语", "总结", "写在最后", "最后", "最后的话")
+GENERIC_AUTOMATION_HEADINGS = ("结论先行", "关键事实", "专业解释", "决策框架", "关键要点")
+BANNED_TITLE_PATTERNS = ("Ainnc", "AINNC", "麦芽营销", "完整指南", "方法论", "判断框架", "实务指南")
+BANNED_MARKETING_WORDS = ("赋能", "无缝", "解锁", "助力", "一站式", "闭环", "抓手", "全链路")
+BANNED_GENERIC_PHRASES = (
+    "先把问题定义、证据与执行边界对齐",
+    "本篇给出可直接落地的判断与下一步动作",
+    "说明应核实哪些证据、如何区分紧急讨论与真实业务需求",
+    "形成有负责人、有证据、有时间窗口的复核动作",
+    "不要把症状直接当成答案",
+    "把讨论翻译成可行动的问题",
+    "质量来自可验证来源与决策可追溯",
+)
 
 
 class Tee:
@@ -84,7 +99,12 @@ def repetition_check(sentences: list[str]) -> list[tuple[int, int, float]]:
 
 
 def has_concrete_content(text: str) -> bool:
-    has_number = bool(re.search(r"\d", text))
+    has_number = bool(
+        re.search(
+            r"\d|[一二三四五六七八九十百千万]+(?:个|条|天|分钟|小时|周|月|年|次|份|点|层|类)",
+            text,
+        )
+    )
     has_percent = "%" in text or "％" in text
     has_marker = any(marker in text for marker in CONCRETE_MARKERS)
     return has_number or has_percent or has_marker
@@ -442,6 +462,23 @@ def h2_sections(content: str) -> list[tuple[str, str]]:
 def check_structure(content: str) -> list[str]:
     issues: list[str] = []
     content_type = frontmatter_value(content, "contentType")
+    title = frontmatter_value(content, "title")
+    body = strip_frontmatter(content)
+    han_count = len(re.findall(r"[\u3400-\u9fff]", body))
+    if not MIN_ARTICLE_HAN_CHARS <= han_count <= MAX_ARTICLE_HAN_CHARS:
+        issues.append(
+            f"正文汉字数应为 {MIN_ARTICLE_HAN_CHARS}-{MAX_ARTICLE_HAN_CHARS}，"
+            f"当前 {han_count} 字"
+        )
+    for pattern in BANNED_TITLE_PATTERNS:
+        if pattern in title:
+            issues.append(f"标题含产品名、内部词或空标题公式“{pattern}”")
+    for word in BANNED_MARKETING_WORDS:
+        if word in body:
+            issues.append(f"正文含禁用营销词“{word}”")
+    for phrase in BANNED_GENERIC_PHRASES:
+        if phrase in body:
+            issues.append(f"正文含通用空话“{phrase}”")
     if content_type not in VALID_CONTENT_TYPES:
         issues.append("frontmatter 缺少有效 contentType；必须是 guide、comparison、analysis 或 opinion")
 
@@ -473,6 +510,8 @@ def check_structure(content: str) -> list[str]:
         issues.append(f"frontmatter FAQ 不足2个真实问句(当前{frontmatter_faq_items}个)")
 
     for heading, section in h2_sections(content):
+        if heading in GENERIC_AUTOMATION_HEADINGS:
+            issues.append(f"二级标题“{heading}”属于批量模板标题，需要改成本文独有标题")
         if heading.upper() in FAQ_HEADINGS:
             continue
         if action_list_count(section) >= 3 and not extract_body_paragraphs(section):
